@@ -19,7 +19,7 @@ An arbitrary-precision decimal arithmetic library for Go.
 
 ## About
 
-<img src="assets/logo2x.svg" height="20" alt="decimal-go" style="vertical-align: middle;"> is a Go implementation inspired by the behavior and API of `decimal.js`, created during the Port Mortem 2026 hackathon.
+<img src="assets/logo2x.svg" height="24" align="absmiddle" alt="decimal-go"> is a Go implementation inspired by the behavior and API of `decimal.js`, created during the Port Mortem 2026 hackathon.
 
 ## Goals
 
