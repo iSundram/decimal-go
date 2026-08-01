@@ -32,7 +32,7 @@ This project is a Go implementation inspired by the behavior and API of `decimal
 
 > **Work in progress.**
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 <table>
   <tr>
@@ -49,7 +49,7 @@ This project is a Go implementation inspired by the behavior and API of `decimal
   </tr>
 </table>
 
-## ✨ Contributors
+## Contributors
 
 Thanks goes to these wonderful people who have contributed to this project. This section automatically updates as new developers join in!
 
@@ -57,7 +57,7 @@ Thanks goes to these wonderful people who have contributed to this project. This
   <img src="https://contrib.rocks/image?repo=iSundram/decimal-go" alt="Contributors" />
 </a>
 
-## 📄 License
+## License
 
 This project is released under the MIT License.
 
