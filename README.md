@@ -1,7 +1,7 @@
 <div align="center">
 <img src="assets/logo.svg" alt="decimal-go logo">
 
-An arbitrary-precision decimal arithmetic library for Go.
+<img src="assets/tagline.svg" alt="An arbitrary-precision decimal arithmetic library for Go.">
 
 <p>
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white" alt="Go">
