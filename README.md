@@ -17,26 +17,26 @@
 
 ---
 
-## About
+## <img src="assets/header_about.svg" alt="About" align="absmiddle">
 
 <img src="assets/logo2x.svg" height="24" align="absmiddle" alt="decimal-go"> is a Go implementation inspired by the behavior and API of `decimal.js`, created during the Port Mortem 2026 hackathon.
 
-## Goals
+## <img src="assets/header_goals.svg" alt="Goals" align="absmiddle">
 
 - Preserve the behavior of the original library as closely as possible.
 - Provide an idiomatic Go API.
 - Maintain high test compatibility.
 - Produce clean, well-documented Go code.
 
-## Status
+## <img src="assets/header_status.svg" alt="Status" align="absmiddle">
 
 > **Work in progress.**
 
-## Contributing
+## <img src="assets/header_contributing.svg" alt="Contributing" align="absmiddle">
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
 
-## Acknowledgements
+## <img src="assets/header_acknowledgements.svg" alt="Acknowledgements" align="absmiddle">
 
 <table>
   <tr>
@@ -53,7 +53,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
   </tr>
 </table>
 
-## Contributors
+## <img src="assets/header_contributors.svg" alt="Contributors" align="absmiddle">
 
 Thanks goes to these wonderful people who have contributed to this project. This section automatically updates as new developers join in!
 
@@ -61,7 +61,7 @@ Thanks goes to these wonderful people who have contributed to this project. This
   <img src="https://contrib.rocks/image?repo=iSundram/decimal-go" alt="Contributors" />
 </a>
 
-## License
+## <img src="assets/header_license.svg" alt="License" align="absmiddle">
 
 This project is released under the MIT License.
 
