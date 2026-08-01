@@ -32,7 +32,32 @@ This project is a Go implementation inspired by the behavior and API of `decimal
 
 > **Work in progress.**
 
-## License
+## 🙏 Acknowledgements
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/MikeMcl">
+        <img src="https://avatars.githubusercontent.com/u/157787?v=4" width="60px;" alt="MikeMcl" style="border-radius: 50%;"/>
+        <br />
+        <sub><b>Michael Mclaughlin</b></sub>
+      </a>
+    </td>
+    <td>
+      Huge thanks to Michael Mclaughlin for the original <code>decimal.js</code> library, which heavily inspired the API, design, and behavior of this project.
+    </td>
+  </tr>
+</table>
+
+## ✨ Contributors
+
+Thanks goes to these wonderful people who have contributed to this project. This section automatically updates as new developers join in!
+
+<a href="https://github.com/iSundram/decimal-go/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=iSundram/decimal-go" alt="Contributors" />
+</a>
+
+## 📄 License
 
 This project is released under the MIT License.
 
