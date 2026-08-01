@@ -1,6 +1,5 @@
 <div align="center">
-
-# decimal-go
+<img src="assets/logo.svg" alt="decimal-go logo">
 
 An arbitrary-precision decimal arithmetic library for Go.
 
