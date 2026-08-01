@@ -54,9 +54,10 @@ func sliceRange(s string, from, to int64) string {
 	return s[from:to]
 }
 
-// powNumber is math.Pow with JS Math.pow semantics for |a| == 1, b = ±Inf.
+// powNumber is math.Pow with JS Math.pow semantics for |a| == 1, b = ±Inf
+// (ES 15.8.2.13: the result is NaN; Go's math.Pow returns 1).
 func powNumber(a, b float64) float64 {
-	if math.IsInf(b, 0) && math.Abs(a) == 1 && math.Signbit(a) {
+	if math.IsInf(b, 0) && math.Abs(a) == 1 {
 		return math.NaN()
 	}
 	return math.Pow(a, b)
@@ -682,8 +683,8 @@ func (x *Decimal) Pow(y any) *Decimal {
 		}
 
 		// Result is positive if x is negative and the last digit of integer
-		// y is even.
-		if yv.d[e]&1 == 0 {
+		// y is even. (JS reads y.d[e] as undefined which & 1 == 0.)
+		if word(yv.d, int(e))&1 == 0 {
 			s = 1
 		}
 

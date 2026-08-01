@@ -20,6 +20,17 @@ func pow10(n int64) int64 {
 	return r
 }
 
+// divPow10 returns w / 10^exp, mirroring JS's `w / Math.pow(10, exp)`.
+// 10^exp overflows int64 for exp > 18 (and Math.pow gives Infinity for
+// exp > 308); in both cases the mathematically-correct truncated result is
+// 0, since w is a base-1e7 word (< 10^7).
+func divPow10(w, exp int64) int64 {
+	if exp > 18 {
+		return 0
+	}
+	return w / pow10(exp)
+}
+
 func ceilDiv(a, b int64) int64 {
 	if a <= 0 {
 		return a / b
@@ -176,7 +187,7 @@ func finalise(x *Decimal, sd, rm int64, isTruncated bool) *Decimal {
 			w = int64(xd[0])
 
 			// Get the rounding digit at index j of w.
-			rd = w / pow10(digits-j-1) % 10
+			rd = divPow10(w, digits-j-1) % 10
 		} else {
 			xdi = (i + 1 + logBase - 1) / logBase
 			k = int64(len(xd))
@@ -204,13 +215,13 @@ func finalise(x *Decimal, sd, rm int64, isTruncated bool) *Decimal {
 				}
 				// Get the index of rd within w.
 				i %= logBase
-				// Get the index of rd within w, adjusted for leading zeros.
-				j = i - logBase + digits
-				if j < 0 {
-					rd = 0
-				} else {
-					rd = w / pow10(digits-j-1) % 10
-				}
+			// Get the index of rd within w, adjusted for leading zeros.
+			j = i - logBase + digits
+			if j < 0 {
+				rd = 0
+			} else {
+				rd = divPow10(w, digits-j-1) % 10
+			}
 			}
 		}
 
