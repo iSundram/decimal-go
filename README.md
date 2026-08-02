@@ -90,7 +90,7 @@ Output:
 3.141592653589793238462643383280
 ```
 
-See the [documentation site](https://iSundram.github.io/decimal-go/), the
+See the [documentation site](https://decimal-go.github.io/), the
 [example tests](example_test.go), the [operations matrix](MATRIX.md),
 the [decimal.js migration guide](docs/migrating-from-decimal-js.md), the
 [design decisions](docs/DECISIONS.md) and the
