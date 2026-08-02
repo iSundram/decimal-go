@@ -1,6 +1,5 @@
 package decimal
 
-
 import "testing"
 
 func TestAcos(t *testing.T) {
