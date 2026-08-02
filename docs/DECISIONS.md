@@ -110,9 +110,12 @@ Inputs like a binary literal with a huge binary exponent (e.g.
 decimal expansion is astronomically long; both the original decimal.js and
 this port cannot compute e.g. `Mod` on them in finite time and finite memory
 (this is a **property of arbitrary-precision decimal arithmetic**, not a port
-bug: the real decimal.js hangs identically on the same input). We deliberately
-did *not* add a synthetic guard that would cap such computations, since that
-would diverge from the reference behavior the port is built to preserve.
+bug: the real decimal.js hangs identically on the same input). The *library*
+deliberately has no artificial cap — that would diverge from the reference.
+Instead, the fuzz target itself skips pairs whose quotient would exceed
+`maxQuotientWords` (`1e5` base-1e7 words ≈ 700k digits, ~3 MB), so the
+worker can never OOM and coverage-loss is nil (even decimal.js cannot
+compute those cases).
 
 ## 8. Benchmark honesty
 

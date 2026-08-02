@@ -58,6 +58,16 @@ func FuzzNewString(f *testing.F) {
 	})
 }
 
+// maxQuotientWords bounds the number of base-1e7 words a fuzzed Div/Mod
+// quotient may have. Division (and hence Mod, which divides first) internal-
+// expands the integer quotient digit-by-digit up to x.e-y.e words; with a
+// p/hex-pair input like "0b1p2738415519256" that is astronomically large
+// (~8e11 words) and kills the fuzz worker with OOM — as does the reference
+// decimal.js, which hangs identically on the same input. Pairs beyond this
+// bound are skipped: they exercise nothing the port could ever compute.
+// See docs/DECISIONS.md §7.
+const maxQuotientWords = 1e5
+
 // FuzzArith crosses the binary operators over arbitrary string pairs;
 // sanitizers panic recovery only allows [DecimalError] failures.
 func FuzzArith(f *testing.F) {
@@ -75,6 +85,11 @@ func FuzzArith(f *testing.F) {
 		_ = x.Plus(y)
 		_ = x.Minus(y)
 		_ = x.Times(y)
+		// Div and Mod expand a quotient with roughly x.e-y.e words;
+		// skip pairs whose quotient cannot be materialized (see above).
+		if y.d == nil || x.d == nil || y.s == 0 || y.d[0] == 0 || x.e-y.e > maxQuotientWords {
+			return
+		}
 		_ = x.Div(y)
 		_ = x.Mod(y)
 	})
