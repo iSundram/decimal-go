@@ -13,6 +13,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/big"
 	"regexp"
 	"strconv"
 	"strings"
@@ -293,6 +294,9 @@ func (c *Constructor) New(v any) *Decimal {
 		return c.fromFloat64(x, float64(v), false, 0)
 	case float64:
 		return c.fromFloat64(x, v, false, 0)
+	case *big.Int:
+		// JS parity: decimal.js parses bigint by its decimal string.
+		return c.fromString(x, v.String())
 	}
 	panic(errors.New(invalidArgument + toDisplayString(v)))
 }
