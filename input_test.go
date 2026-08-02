@@ -48,7 +48,10 @@ func TestNewInputTypes(t *testing.T) {
 		// bigint (JS bigint parity, exact)
 		{big.NewInt(1234567890123456789), "1234567890123456789"},
 		{new(big.Int).Neg(big.NewInt(7)), "-7"},
-		{func() *big.Int { z, _ := new(big.Int).SetString("340282366920938463463374607431768211456", 10); return z }(), "3.40282366920938463463374607431768211456e+38"},
+		{func() *big.Int {
+			z, _ := new(big.Int).SetString("340282366920938463463374607431768211456", 10)
+			return z
+		}(), "3.40282366920938463463374607431768211456e+38"},
 	}
 	for _, tc := range cases {
 		got := d.New(tc.v).ValueOf()
