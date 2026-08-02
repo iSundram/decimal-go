@@ -22,7 +22,6 @@ echo "== JS benchmarks =="
 DECIMAL_JS_PATH="$DECIMAL_JS_PATH" node "$ROOT/bench/js/bench.js" | tee /tmp/js_ops.txt
 
 echo
-echo "== Comparison (ns/op; ratio>1 means Go slower) =="
-printf "%-18s %-14s %-14s %-10s\n" "op@precision" "Go" "JS" "Go/JS"
+echo "== Comparison (ns/op; ratio <1 means the Go port is faster) =="
 
 python3 "$ROOT/bench/go_js_compare.py" /tmp/go_ops.txt /tmp/js_ops.txt

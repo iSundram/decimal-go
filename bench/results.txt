@@ -1,0 +1,143 @@
+== Go benchmarks ==
+BenchmarkNew/precision=20-2         	  764173	      1642 ns/op
+BenchmarkNew/precision=100-2        	  700191	      1699 ns/op
+BenchmarkNew/precision=1000-2       	  745408	      1694 ns/op
+BenchmarkAdd/precision=20-2         	 4764938	       267.2 ns/op
+BenchmarkAdd/precision=100-2        	 4533919	       255.0 ns/op
+BenchmarkAdd/precision=1000-2       	 4931829	       244.9 ns/op
+BenchmarkSub/precision=20-2         	 4711383	       245.4 ns/op
+BenchmarkSub/precision=100-2        	 4546320	       252.9 ns/op
+BenchmarkSub/precision=1000-2       	 4665130	       254.0 ns/op
+BenchmarkMul/precision=20-2         	 3682894	       332.3 ns/op
+BenchmarkMul/precision=100-2        	 4134110	       284.5 ns/op
+BenchmarkMul/precision=1000-2       	 4280330	       291.4 ns/op
+BenchmarkAddFromString/precision=20-2         	  745064	      1890 ns/op
+BenchmarkDiv/precision=20-2                   	 1000000	      1184 ns/op
+BenchmarkDiv/precision=100-2                  	  409866	      3030 ns/op
+BenchmarkDiv/precision=1000-2                 	   59727	     20416 ns/op
+BenchmarkDivToInt-2                           	 2866264	       424.6 ns/op
+BenchmarkMod-2                                	 1000000	      1050 ns/op
+BenchmarkPowInt/precision=20-2                	  376796	      3406 ns/op
+BenchmarkPowInt/precision=100-2               	  381760	      3519 ns/op
+BenchmarkPowInt/precision=1000-2              	  358308	      3532 ns/op
+BenchmarkPowFraction/precision=20-2           	   12517	     93816 ns/op
+BenchmarkPowFraction/precision=100-2          	    1239	    983673 ns/op
+BenchmarkPowFraction/precision=1000-2         	       4	 258874026 ns/op
+BenchmarkSqrt/precision=20-2                  	  155482	      8082 ns/op
+BenchmarkSqrt/precision=100-2                 	   26688	     45301 ns/op
+BenchmarkSqrt/precision=1000-2                	     448	   2598351 ns/op
+BenchmarkCbrt/precision=20-2                  	  102441	     11341 ns/op
+BenchmarkCbrt/precision=100-2                 	   17118	     71150 ns/op
+BenchmarkCbrt/precision=1000-2                	     192	   6266012 ns/op
+BenchmarkExp/precision=20-2                   	   30140	     40885 ns/op
+BenchmarkExp/precision=100-2                  	    2910	    438112 ns/op
+BenchmarkExp/precision=1000-2                 	      14	  85997392 ns/op
+BenchmarkLn/precision=20-2                    	   23778	     50497 ns/op
+BenchmarkLn/precision=100-2                   	    1899	    637093 ns/op
+BenchmarkLn/precision=1000-2                  	       6	 177011933 ns/op
+BenchmarkLogBase10/precision=20-2             	   17461	     67097 ns/op
+BenchmarkLogBase10/precision=100-2            	    1741	    727629 ns/op
+BenchmarkLogBase10/precision=1000-2           	       7	 183315888 ns/op
+BenchmarkSin/precision=20-2                   	   71092	     21844 ns/op
+BenchmarkSin/precision=100-2                  	   20752	     56765 ns/op
+BenchmarkSin/precision=1000-2                 	     922	   1335387 ns/op
+BenchmarkCos/precision=20-2                   	   63901	     20132 ns/op
+BenchmarkCos/precision=100-2                  	   20653	     58129 ns/op
+BenchmarkCos/precision=1000-2                 	     850	   1412387 ns/op
+BenchmarkTan/precision=20-2                   	   27553	     38750 ns/op
+BenchmarkTan/precision=100-2                  	   10000	    141783 ns/op
+BenchmarkTan/precision=1000-2                 	     232	   4973527 ns/op
+BenchmarkAtan/precision=20-2                  	  791994	      1503 ns/op
+BenchmarkAtan/precision=100-2                 	  817285	      1625 ns/op
+BenchmarkAtan/precision=1000-2                	  556665	      2413 ns/op
+BenchmarkToFixed-2                            	 1725154	       692.8 ns/op
+BenchmarkToExponential-2                      	 1639825	       717.7 ns/op
+BenchmarkToPrecision-2                        	 1795887	       657.4 ns/op
+BenchmarkCmp-2                                	 5701862	       213.3 ns/op
+BenchmarkRoundTrip-2                          	  437029	      3047 ns/op
+
+== JS benchmarks ==
+New,20,1132.8,0
+Add,20,323.2,0
+Sub,20,312.5,0
+Mul,20,1039.0,0
+Div,20,2468.3,0
+Div,100,6299.5,0
+Div,1000,52159.3,0
+DivToInt,20,664.7,0
+Mod,20,1258.3,0
+PowInt,20,6194.3,0
+PowFraction,20,179369.0,0
+Sqrt,20,11828.6,0
+Cbrt,20,26129.1,0
+Exp,20,56693.8,0
+Ln,20,83774.0,0
+LogBase10,20,119776.5,0
+Sin,20,31453.7,0
+Cos,20,42136.8,0
+Tan,20,77092.3,0
+Atan,20,3303.9,0
+ToFixed,20,1011.4,0
+ToExponential,20,782.7,0
+ToPrecision,20,879.6,0
+Cmp,20,239.1,0
+RoundTrip,20,1767.6,0
+
+== Comparison (ns/op; ratio <1 means the Go port is faster) ==
+op@precision         Go ns/op   JS ns/op     Go/JS
+Add@100                 255.0    (no JS) 
+Add@1000                244.9    (no JS) 
+Add@20                  267.2      323.2      0.83
+AddFromString@20       1890.0    (no JS) 
+Atan@100               1625.0    (no JS) 
+Atan@1000              2413.0    (no JS) 
+Atan@20                1503.0     3303.9      0.45
+Cbrt@100              71150.0    (no JS) 
+Cbrt@1000           6266012.0    (no JS) 
+Cbrt@20               11341.0    26129.1      0.43
+Cmp@20                  213.3      239.1      0.89
+Cos@100               58129.0    (no JS) 
+Cos@1000            1412387.0    (no JS) 
+Cos@20                20132.0    42136.8      0.48
+Div@100                3030.0     6299.5      0.48
+Div@1000              20416.0    52159.3      0.39
+Div@20                 1184.0     2468.3      0.48
+DivToInt@20             424.6      664.7      0.64
+Exp@100              438112.0    (no JS) 
+Exp@1000           85997392.0    (no JS) 
+Exp@20                40885.0    56693.8      0.72
+Ln@100               637093.0    (no JS) 
+Ln@1000            177011933.0    (no JS) 
+Ln@20                 50497.0    83774.0      0.60
+LogBase10@100        727629.0    (no JS) 
+LogBase10@1000     183315888.0    (no JS) 
+LogBase10@20          67097.0   119776.5      0.56
+Mod@20                 1050.0     1258.3      0.83
+Mul@100                 284.5    (no JS) 
+Mul@1000                291.4    (no JS) 
+Mul@20                  332.3     1039.0      0.32
+New@100                1699.0    (no JS) 
+New@1000               1694.0    (no JS) 
+New@20                 1642.0     1132.8      1.45
+PowFraction@100      983673.0    (no JS) 
+PowFraction@1000   258874026.0    (no JS) 
+PowFraction@20        93816.0   179369.0      0.52
+PowInt@100             3519.0    (no JS) 
+PowInt@1000            3532.0    (no JS) 
+PowInt@20              3406.0     6194.3      0.55
+RoundTrip@20           3047.0     1767.6      1.72 <-- Go slower
+Sin@100               56765.0    (no JS) 
+Sin@1000            1335387.0    (no JS) 
+Sin@20                21844.0    31453.7      0.69
+Sqrt@100              45301.0    (no JS) 
+Sqrt@1000           2598351.0    (no JS) 
+Sqrt@20                8082.0    11828.6      0.68
+Sub@100                 252.9    (no JS) 
+Sub@1000                254.0    (no JS) 
+Sub@20                  245.4      312.5      0.79
+Tan@100              141783.0    (no JS) 
+Tan@1000            4973527.0    (no JS) 
+Tan@20                38750.0    77092.3      0.50
+ToExponential@20        717.7      782.7      0.92
+ToFixed@20              692.8     1011.4      0.68
+ToPrecision@20          657.4      879.6      0.75
