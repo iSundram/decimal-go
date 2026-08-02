@@ -70,13 +70,13 @@ func (c *Constructor) Floor(x any) *Decimal {
 // Hypot returns the square root of the sum of the squares of the arguments.
 func (c *Constructor) Hypot(args ...any) *Decimal {
 	t := c.New(0)
-	external = false
+	c.external = false
 
 	for _, a := range args {
 		n := c.New(a)
 		if n.d == nil {
 			if n.s != 0 {
-				external = true
+				c.external = true
 				return c.newInf(1)
 			}
 			t = n
@@ -85,7 +85,7 @@ func (c *Constructor) Hypot(args ...any) *Decimal {
 		}
 	}
 
-	external = true
+	c.external = true
 
 	return t.Sqrt()
 }
@@ -263,11 +263,11 @@ func (c *Constructor) Sum(args ...any) *Decimal {
 	}
 	x := c.New(args[0])
 
-	external = false
+	c.external = false
 	for i := 1; x.s != 0 && i < len(args); i++ {
 		x = x.Plus(args[i])
 	}
-	external = true
+	c.external = true
 
 	return finalise(x, c.Precision, c.Rounding, false)
 }

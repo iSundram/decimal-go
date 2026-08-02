@@ -74,7 +74,7 @@ func formatSciWithExp(f float64, e int64) string {
 func getLn10(c *Constructor, sd, pr int64) *Decimal {
 	if sd > ln10Precision {
 		// Reset global state in case the panic is caught.
-		external = true
+		c.external = true
 		if pr > 0 {
 			c.Precision = pr
 		}
@@ -110,7 +110,7 @@ func (x *Decimal) Sqrt() *Decimal {
 		return c.newInf(1)
 	}
 
-	external = false
+	x.c.external = false
 
 	// Initial estimate.
 	sf := math.Sqrt(x.Float64())
@@ -191,7 +191,7 @@ func (x *Decimal) Sqrt() *Decimal {
 		}
 	}
 
-	external = true
+	x.c.external = true
 
 	return finalise(r, e, c.Rounding, m)
 }
@@ -205,7 +205,7 @@ func (x *Decimal) Cbrt() *Decimal {
 	if !x.IsFinite() || x.IsZero() {
 		return c.New(x)
 	}
-	external = false
+	x.c.external = false
 
 	// Initial estimate.
 	s := float64(x.s) * math.Pow(float64(x.s)*x.Float64(), 1.0/3)
@@ -293,7 +293,7 @@ func (x *Decimal) Cbrt() *Decimal {
 		}
 	}
 
-	external = true
+	x.c.external = true
 
 	return finalise(r, e, c.Rounding, m)
 }
@@ -353,7 +353,7 @@ func (x *Decimal) Log(bases ...any) *Decimal {
 		}
 	}
 
-	external = false
+	x.c.external = false
 	sd := pr + guard
 	num := naturalLogarithm(arg, sd)
 	var denominator *Decimal
@@ -395,7 +395,7 @@ func (x *Decimal) Log(bases ...any) *Decimal {
 		}
 	}
 
-	external = true
+	x.c.external = true
 
 	return finalise(r, pr, rm, false)
 }
@@ -446,7 +446,7 @@ func naturalExponential(x *Decimal, sd int64) *Decimal {
 
 	var wpr int64
 	if sd == prNull {
-		external = false
+		x.c.external = false
 		wpr = pr
 	} else {
 		wpr = sd
@@ -491,7 +491,7 @@ func naturalExponential(x *Decimal, sd int64) *Decimal {
 					rep++
 				} else {
 					c.Precision = pr
-					external = true
+					x.c.external = true
 					return finalise(sum, pr, rm, true)
 				}
 			} else {
@@ -531,7 +531,7 @@ func naturalLogarithm(y *Decimal, sd int64) *Decimal {
 
 	var wpr int64
 	if sd == prNull {
-		external = false
+		y.c.external = false
 		wpr = pr
 	} else {
 		wpr = sd
@@ -570,7 +570,7 @@ func naturalLogarithm(y *Decimal, sd int64) *Decimal {
 		c.Precision = pr
 
 		if sd == prNull {
-			external = true
+			y.c.external = true
 			return finalise(x, pr, rm, true)
 		}
 		return x
@@ -616,7 +616,7 @@ func naturalLogarithm(y *Decimal, sd int64) *Decimal {
 					rep = 1
 				} else {
 					c.Precision = pr
-					external = true
+					y.c.external = true
 					return finalise(sum, pr, rm, true)
 				}
 			} else {
@@ -714,7 +714,7 @@ func (x *Decimal) Pow(y any) *Decimal {
 		return c.newZero(1)
 	}
 
-	external = false
+	x.c.external = false
 	c.Rounding = 1
 	xx.s = 1
 
@@ -750,7 +750,7 @@ func (x *Decimal) Pow(y any) *Decimal {
 	}
 
 	r.s = s
-	external = true
+	x.c.external = true
 	c.Rounding = rm
 
 	return finalise(r, pr, rm, false)

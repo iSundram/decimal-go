@@ -336,7 +336,7 @@ func toStringBinary(x *Decimal, baseOut int64, opts []int64) string {
 				xx = divide(xx, y, sd, rm, false, base)
 				xd = xx.d
 				e = xx.e
-				roundUp = inexact
+				roundUp = x.c.inexact
 			}
 
 			// The rounding digit.
@@ -506,7 +506,7 @@ func (x *Decimal) ToFraction(maxD ...any) []*Decimal {
 		}
 	}
 
-	external = false
+	x.c.external = false
 	n := c.New(digitsToString(xd))
 	pr := c.Precision
 	c.Precision = xdLen2(xd)
@@ -544,7 +544,7 @@ func (x *Decimal) ToFraction(maxD ...any) []*Decimal {
 	}
 
 	c.Precision = pr
-	external = true
+	x.c.external = true
 
 	return r
 }
@@ -594,9 +594,9 @@ func (x *Decimal) ToNearest(y any, rm ...int64) *Decimal {
 
 	// If y is not zero, calculate the nearest multiple of y to x.
 	if yv.d[0] != 0 {
-		external = false
+		x.c.external = false
 		xx = divide(xx, yv, 0, r, true, 0).Times(yv)
-		external = true
+		x.c.external = true
 		finalise(xx, sdNull, 0, false)
 	} else {
 		// If y is zero, return zero with the sign of x.

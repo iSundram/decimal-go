@@ -328,7 +328,7 @@ func finalise(x *Decimal, sd, rm int64, isTruncated bool) *Decimal {
 	}
 
 out:
-	if external {
+	if x.c.external {
 		// Overflow?
 		if x.e > c.MaxE {
 			// Infinity.
@@ -395,7 +395,7 @@ func intPow(c *Constructor, x *Decimal, n, pr int64) *Decimal {
 	// Maximum digits array length; leaves [28, 34] guard digits.
 	k := int(math.Ceil(float64(pr)/float64(logBase) + 4))
 
-	external = false
+	c.external = false
 
 	for {
 		if n%2 != 0 {
@@ -423,7 +423,7 @@ func intPow(c *Constructor, x *Decimal, n, pr int64) *Decimal {
 		}
 	}
 
-	external = true
+	c.external = true
 
 	return r
 }
@@ -736,7 +736,7 @@ func divide(x, y *Decimal, pr, rm int64, dp bool, baseI int64) *Decimal {
 	// logBaseI is 1 when divide is being used for base conversion.
 	if logBaseI == 1 {
 		q.e = e
-		inexact = more
+		x.c.inexact = more
 	} else {
 		// To calculate q.e, first get the number of digits of qd[0].
 		i2 := int64(1)
@@ -997,7 +997,7 @@ func (x *Decimal) Plus(y any) *Decimal {
 		if yd[0] == 0 {
 			yv = c.New(x)
 		}
-		if external {
+		if x.c.external {
 			return finalise(yv, pr, rm, false)
 		}
 		return yv
@@ -1084,7 +1084,7 @@ func (x *Decimal) Plus(y any) *Decimal {
 	yv.d = xdc
 	yv.e = getBase10Exponent(xdc, e)
 
-	if external {
+	if x.c.external {
 		return finalise(yv, c.Precision, c.Rounding, false)
 	}
 	return yv
@@ -1141,7 +1141,7 @@ func (x *Decimal) Minus(y any) *Decimal {
 			// to -Infinity.
 			return c.newZero(ifelse8(rm == RoundFloor, -1, 1))
 		}
-		if external {
+		if x.c.external {
 			return finalise(yv, pr, rm, false)
 		}
 		return yv
@@ -1259,7 +1259,7 @@ func (x *Decimal) Minus(y any) *Decimal {
 	yv.d = xdc
 	yv.e = getBase10Exponent(xdc, e)
 
-	if external {
+	if x.c.external {
 		return finalise(yv, pr, rm, false)
 	}
 	return yv
@@ -1337,7 +1337,7 @@ func (x *Decimal) Times(y any) *Decimal {
 	yv.d = r
 	yv.e = getBase10Exponent(r, e)
 
-	if external {
+	if x.c.external {
 		return finalise(yv, c.Precision, c.Rounding, false)
 	}
 	return yv
@@ -1375,7 +1375,7 @@ func (x *Decimal) Mod(y any) *Decimal {
 	}
 
 	// Prevent rounding of intermediate calculations.
-	external = false
+	x.c.external = false
 
 	var q *Decimal
 	if c.Modulo == Euclid {
@@ -1389,7 +1389,7 @@ func (x *Decimal) Mod(y any) *Decimal {
 
 	q = q.Times(yv)
 
-	external = true
+	x.c.external = true
 
 	return x.Minus(q)
 }

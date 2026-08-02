@@ -63,13 +63,10 @@ var (
 	piNum   *Decimal
 )
 
-// Internal shared state, mirroring the module-level variables of decimal.js.
-var (
-	inexact  bool // set by divide when invoked for base conversion
-	quadrant int  // set by toLessThanHalfPi for the trig functions
-	external = true
-)
-
+// Internal per-constructor state lives on the *Constructor so that each clone
+// is safe to use concurrently (mirroring the decimal.js guidance to create a
+// cloned constructor per concurrent context). In decimal.js these are module
+// globals; Go ports must not share mutable flags across goroutines.
 var (
 	isBinaryRe  = regexp.MustCompile(`(?i)^0b([01]+(\.[01]*)?|\.[01]+)(p[+-]?\d+)?$`)
 	isHexRe     = regexp.MustCompile(`(?i)^0x([0-9a-f]+(\.[0-9a-f]*)?|\.[0-9a-f]+)(p[+-]?\d+)?$`)
@@ -103,6 +100,16 @@ type Constructor struct {
 	MaxE int64
 	// Whether to use cryptographically-secure random number generation.
 	Crypto bool
+
+	// inexact is set by divide when invoked for base conversion. It is
+	// per-constructor so clones can be used from separate goroutines.
+	inexact bool
+	// quadrant is set by toLessThanHalfPi for the trig functions.
+	quadrant int
+	// external mirrors decimal.js's module-level flag: it is false only while
+	// a constructor is mid-operation, suppressing the overflow-underflow
+	// conversions applied by New to internal intermediate results.
+	external bool
 }
 
 // Decimal is an arbitrary-precision decimal floating-point number.
@@ -147,6 +154,7 @@ func defaultConstructor() *Constructor {
 		MinE:      -expLimit,
 		MaxE:      expLimit,
 		Crypto:    false,
+		external:  true,
 	}
 }
 
@@ -155,7 +163,6 @@ func defaultConstructor() *Constructor {
 var Default = defaultConstructor()
 
 func init() {
-	external = true
 	ln10Num = Default.New(ln10Str)
 	piNum = Default.New(piStr)
 }
@@ -240,7 +247,7 @@ func (c *Constructor) New(v any) *Decimal {
 	switch v := v.(type) {
 	case *Decimal:
 		x.s = v.s
-		if external {
+		if c.external {
 			if v.d == nil || v.e > c.MaxE {
 				// Infinity (or NaN).
 				x.e = 0
@@ -340,7 +347,7 @@ func (c *Constructor) fromFloat64(x *Decimal, v float64, isInt bool, iv any) *De
 		for i := n; i >= 10; i /= 10 {
 			e++
 		}
-		if external {
+		if c.external {
 			if e > c.MaxE {
 				x.e = 0
 				x.d = nil
@@ -502,7 +509,7 @@ func parseDecimal(x *Decimal, str string) *Decimal {
 		d = append(d, int32(atoiSafe(str)))
 		x.d = d
 
-		if external {
+		if x.c.external {
 			// Overflow?
 			if x.e > x.c.MaxE {
 				// Infinity.
@@ -617,7 +624,7 @@ func parseOther(x *Decimal, str string) *Decimal {
 	}
 	x.e = getBase10Exponent(xd, xe)
 	x.d = xd
-	external = false
+	x.c.external = false
 
 	// 4 * the number of digits of str will always be enough precision for
 	// an exact conversion.
@@ -633,7 +640,7 @@ func parseOther(x *Decimal, str string) *Decimal {
 			x = x.Times(Default.Pow(int64(2), p))
 		}
 	}
-	external = true
+	x.c.external = true
 
 	return x
 }

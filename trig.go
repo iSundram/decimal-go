@@ -92,7 +92,7 @@ func taylorSeries(c *Constructor, n int64, x, y *Decimal, isHyperbolic bool) *De
 	pr := c.Precision
 	k := int(math.Ceil(float64(pr) / float64(logBase)))
 
-	external = false
+	c.external = false
 	x2 := x.Times(x)
 	u := c.New(y)
 
@@ -132,7 +132,7 @@ func taylorSeries(c *Constructor, n int64, x, y *Decimal, isHyperbolic bool) *De
 		u, y, t = y, t, u
 	}
 
-	external = true
+	c.external = true
 	if len(t.d) > k+1 {
 		t.d = t.d[:k+1]
 	}
@@ -150,9 +150,9 @@ func toLessThanHalfPi(c *Constructor, x *Decimal) *Decimal {
 
 	if x.Lte(halfPi) {
 		if isNeg {
-			quadrant = 4
+			c.quadrant = 4
 		} else {
-			quadrant = 1
+			c.quadrant = 1
 		}
 		return x
 	}
@@ -161,9 +161,9 @@ func toLessThanHalfPi(c *Constructor, x *Decimal) *Decimal {
 
 	if t.IsZero() {
 		if isNeg {
-			quadrant = 3
+			c.quadrant = 3
 		} else {
-			quadrant = 2
+			c.quadrant = 2
 		}
 	} else {
 		x = x.Minus(t.Times(pi))
@@ -184,21 +184,21 @@ func toLessThanHalfPi(c *Constructor, x *Decimal) *Decimal {
 					q = 1
 				}
 			}
-			quadrant = q
+			c.quadrant = q
 			return x
 		}
 
 		if isOdd(t) {
 			if isNeg {
-				quadrant = 1
+				c.quadrant = 1
 			} else {
-				quadrant = 4
+				c.quadrant = 4
 			}
 		} else {
 			if isNeg {
-				quadrant = 3
+				c.quadrant = 3
 			} else {
-				quadrant = 2
+				c.quadrant = 2
 			}
 		}
 	}
@@ -230,7 +230,7 @@ func (x *Decimal) Cos() *Decimal {
 	c.Precision = pr
 	c.Rounding = rm
 
-	if quadrant == 2 || quadrant == 3 {
+	if x.c.quadrant == 2 || x.c.quadrant == 3 {
 		x = x.Neg()
 	}
 	return finalise(x, pr, rm, true)
@@ -258,7 +258,7 @@ func (x *Decimal) Sin() *Decimal {
 	c.Precision = pr
 	c.Rounding = rm
 
-	if quadrant > 2 {
+	if x.c.quadrant > 2 {
 		x = x.Neg()
 	}
 	return finalise(x, pr, rm, true)
@@ -288,7 +288,7 @@ func (x *Decimal) Tan() *Decimal {
 	c.Precision = pr
 	c.Rounding = rm
 
-	if quadrant == 2 || quadrant == 4 {
+	if x.c.quadrant == 2 || x.c.quadrant == 4 {
 		xx = xx.Neg()
 	}
 	return finalise(xx, pr, rm, true)
@@ -470,11 +470,11 @@ func (x *Decimal) Acosh() *Decimal {
 	rm := c.Rounding
 	c.Precision = pr + max64(int64(math.Abs(float64(x.e))), x.sdInt()) + 4
 	c.Rounding = 1
-	external = false
+	x.c.external = false
 
 	xx := x.Times(x).Minus(1).Sqrt().Plus(x)
 
-	external = true
+	x.c.external = true
 	c.Precision = pr
 	c.Rounding = rm
 
@@ -494,11 +494,11 @@ func (x *Decimal) Asinh() *Decimal {
 	rm := c.Rounding
 	c.Precision = pr + 2*max64(int64(math.Abs(float64(x.e))), x.sdInt()) + 6
 	c.Rounding = 1
-	external = false
+	x.c.external = false
 
 	xx := x.Times(x).Plus(1).Sqrt().Plus(x)
 
-	external = true
+	x.c.external = true
 	c.Precision = pr
 	c.Rounding = rm
 
@@ -623,7 +623,7 @@ func (x *Decimal) Atan() *Decimal {
 		x = x.Div(x.Times(x).Plus(1).Sqrt().Plus(1))
 	}
 
-	external = false
+	x.c.external = false
 
 	j := int(math.Ceil(float64(wpr) / float64(logBase)))
 	n := int64(1)
@@ -661,7 +661,7 @@ func (x *Decimal) Atan() *Decimal {
 		r = r.Times(int64(2 << (k - 1)))
 	}
 
-	external = true
+	x.c.external = true
 
 	c.Precision = pr
 	c.Rounding = rm
