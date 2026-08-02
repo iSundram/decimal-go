@@ -110,10 +110,10 @@ type Constructor struct {
 // The zero value is not ready for use; obtain values through
 // Constructor.New (or the package-level New which uses Default).
 type Decimal struct {
-	c   *Constructor
-	s   int8    // 1, -1, or 0 for NaN
-	e   int64   // base 10 exponent of the first word of d (undefined for Inf/NaN)
-	d   []int32 // coefficient words, base 1e7; nil for Infinity/NaN
+	c *Constructor
+	s int8    // 1, -1, or 0 for NaN
+	e int64   // base 10 exponent of the first word of d (undefined for Inf/NaN)
+	d []int32 // coefficient words, base 1e7; nil for Infinity/NaN
 }
 
 // Config is the options struct accepted by Constructor.Config and

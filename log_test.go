@@ -27,10 +27,10 @@ func TestLog(t *testing.T) {
 	tf("-Infinity", "Infinity", "NaN", 40, 4)
 	tf("NaN", "10", "NaN", 40, 4)
 
-	tf("1", "0", "NaN", 40, 4)      // Math.log(1)  / Math.log(0)  == -0
-	tf("10", "0", "NaN", 40, 4)     // Math.log(10) / Math.log(0)  == -0
-	tf("10", "-0", "NaN", 40, 4)    // Math.log(10) / Math.log(-0) == -0
-	tf("10", "1", "NaN", 40, 4)     // Math.log(10) / Math.log(1)  == Infinity
+	tf("1", "0", "NaN", 40, 4)   // Math.log(1)  / Math.log(0)  == -0
+	tf("10", "0", "NaN", 40, 4)  // Math.log(10) / Math.log(0)  == -0
+	tf("10", "-0", "NaN", 40, 4) // Math.log(10) / Math.log(-0) == -0
+	tf("10", "1", "NaN", 40, 4)  // Math.log(10) / Math.log(1)  == Infinity
 	tf("10", "-1", "NaN", 40, 4)
 	tf("10", "Infinity", "NaN", 40, 4) // Math.log(10) / Math.log(Infinity) == 0
 	tf("10", "-Infinity", "NaN", 40, 4)

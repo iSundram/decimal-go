@@ -215,13 +215,13 @@ func finalise(x *Decimal, sd, rm int64, isTruncated bool) *Decimal {
 				}
 				// Get the index of rd within w.
 				i %= logBase
-			// Get the index of rd within w, adjusted for leading zeros.
-			j = i - logBase + digits
-			if j < 0 {
-				rd = 0
-			} else {
-				rd = divPow10(w, digits-j-1) % 10
-			}
+				// Get the index of rd within w, adjusted for leading zeros.
+				j = i - logBase + digits
+				if j < 0 {
+					rd = 0
+				} else {
+					rd = divPow10(w, digits-j-1) % 10
+				}
 			}
 		}
 
