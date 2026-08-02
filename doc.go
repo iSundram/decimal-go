@@ -55,7 +55,7 @@ A single *Constructor shared without synchronisation is not supported.
 
 # API compatibility
 
-Methods follow idiomatic Go name() names (Plus, Minus, Times, Div, Pow,
+Methods follow idiomatic Go naming (Plus, Minus, Times, Div, Pow,
 Sqrt, Sin, ...). The decimal.js long-form names (DividedBy, NaturalLogarithm,
 SquareRoot, ...), ToJSON and MarshalJSON are provided as aliases in parity.go.
 String returns the decimal.js toString() form; ValueOf returns the valueOf()

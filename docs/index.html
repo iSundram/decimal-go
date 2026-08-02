@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>decimal-go — arbitrary-precision decimal arithmetic for Go</title>
+<meta name="description" content="A port of decimal.js to Go with byte-for-byte behavioral parity, zero dependencies.">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #2b2b2b;
+  --bg-soft:   #303030;
+  --bg-card:   #262626;
+  --text:      #d4d4d4;
+  --text-dim:  #b3b3b3;
+  --text-hi:   #ffffff;
+  --line:      #3c3c3c;
+  --accent:    #d4d4d4;
+  --code-bg:   #242424;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: .01em;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--text-hi); text-decoration: none; border-bottom: 1px solid var(--line); transition: border-color .15s; }
+a:hover { border-bottom-color: var(--text-hi); }
+
+.container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------- header ---------- */
+header {
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0;
+  background: rgba(43,43,43,.92);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+  max-width: 980px; margin: 0 auto;
+}
+.header-logo { display: flex; align-items: center; gap: 12px; border-bottom: none; }
+.header-logo img { height: 34px; border-radius: 4px; display: block; }
+nav a { margin-left: 22px; border-bottom: none; color: var(--text-dim); font-size: 15px; }
+nav a:hover { color: var(--text-hi); }
+
+/* ---------- hero ---------- */
+.hero {
+  text-align: center;
+  padding: 84px 24px 64px;
+  border-bottom: 1px solid var(--line);
+}
+.hero img.hero-logo { height: 88px; border-radius: 10px; }
+.hero h1 {
+  font-weight: 500;
+  font-size: 40px;
+  color: var(--text-hi);
+  letter-spacing: .5px;
+  margin-top: 26px;
+}
+.hero p.tagline {
+  color: var(--text-dim);
+  font-size: 19px;
+  margin: 14px auto 30px;
+  max-width: 620px;
+}
+.badges { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 8px; }
+.badges span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 13px;
+  color: var(--text-dim);
+  background: var(--bg-soft);
+}
+.cta-row { margin-top: 34px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  border: 1px solid var(--text-dim);
+  border-radius: 6px;
+  padding: 10px 26px;
+  font-size: 15px;
+  color: var(--text-hi);
+  background: transparent;
+  transition: background .15s;
+}
+.btn:hover { background: var(--bg-soft); border-bottom-color: var(--text-dim); }
+.btn.solid { background: var(--text-hi); color: var(--bg); border-color: var(--text-hi); font-weight: 600; }
+.btn.solid:hover { background: var(--text); }
+
+/* ---------- sections ---------- */
+section { padding: 64px 0; border-bottom: 1px solid var(--line); }
+section:last-of-type { border-bottom: none; }
+h2 {
+  font-size: 28px; font-weight: 500; color: var(--text-hi);
+  letter-spacing: .3px; margin-bottom: 20px;
+}
+h3 { font-size: 18px; font-weight: 600; color: var(--text-hi); margin: 26px 0 10px; }
+p  { margin-bottom: 14px; color: var(--text); }
+.muted { color: var(--text-dim); }
+ul.plain { list-style: none; }
+ul.plain li { padding: 6px 0 6px 24px; position: relative; }
+ul.plain li::before { content: "—"; position: absolute; left: 0; color: var(--text-dim); }
+
+/* ---------- code ---------- */
+code, pre {
+  font-family: "SFMono-Regular", ui-monospace, Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 13.5px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px 20px;
+  overflow-x: auto;
+  margin: 16px 0;
+  line-height: 1.55;
+}
+code { background: var(--code-bg); border-radius: 4px; padding: 1px 6px; }
+pre code { background: none; padding: 0; }
+.kw { color: #ffffff; } .fn { color: #d4d4d4; } .cm { color: #757575; font-style: italic; } .st { color: #b3b3b3; }
+
+/* ---------- tables ---------- */
+table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; }
+th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); }
+th { color: var(--text-hi); font-weight: 600; }
+td { color: var(--text); }
+td.dim, td.r { color: var(--text-dim); }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; }
+tr.loser td { color: var(--text-dim); }
+
+/* ---------- cards ---------- */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 14px; margin: 20px 0; }
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px 22px;
+}
+.card h3 { margin-top: 0; }
+.card p { color: var(--text-dim); font-size: 14.5px; margin: 6px 0 0; }
+.stat { font-size: 30px; color: var(--text-hi); font-weight: 600; letter-spacing: .5px; }
+
+.note {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--text-dim);
+  border-radius: 6px;
+  background: var(--bg-card);
+  padding: 14px 18px;
+  margin: 16px 0;
+  color: var(--text-dim);
+  font-size: 14.5px;
+}
+
+/* ---------- footer ---------- */
+footer {
+  padding: 40px 0 60px;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+footer .rule { border-top: 1px solid var(--line); margin-bottom: 28px; }
+footer p { color: var(--text-dim); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="header-logo" href="#top"><img src="assets/logo2x.svg" alt="decimal-go"></a>
+    <nav>
+      <a href="#install">Install</a>
+      <a href="#usage">Usage</a>
+      <a href="#parity">Parity</a>
+      <a href="#benchmarks">Benchmarks</a>
+      <a href="https://github.com/iSundram/decimal-go">GitHub</a>
+      <a href="https://pkg.go.dev/github.com/iSundram/decimal-go">pkg.go.dev</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container" id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <img class="hero-logo" src="assets/logo2x.svg" alt="decimal-go">
+    <h1>Arbitrary-precision decimal arithmetic, ported to Go</h1>
+    <p class="tagline">
+      A behavioral port of <a href="https://github.com/MikeMcl/decimal.js">decimal.js</a> v10.6.0:
+      exact decimal math for money, rates and measurements — zero dependencies,
+      Go 1.25+, and verified byte-for-byte against the original.
+    </p>
+    <div class="cta-row">
+      <a class="btn solid" href="#install">Get started</a>
+      <a class="btn" href="https://github.com/iSundram/decimal-go">View on GitHub</a>
+    </div>
+    <div class="badges">
+      <span>Go 1.25+</span>
+      <span>MIT License</span>
+      <span>Zero dependencies</span>
+      <span>61/61 test modules ported</span>
+      <span>1518 cases cross-validated</span>
+      <span>Race detector clean</span>
+      <span>96% coverage</span>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section id="install">
+    <h2>Install</h2>
+    <pre><code><span class="kw">go get</span> github.com/iSundram/decimal-go</code></pre>
+<pre><code>package main
+
+import (
+	"fmt"
+
+	"github.com/iSundram/decimal-go"
+)
+
+func main() {
+	<span class="cm">// Money math without the float rounding surprises of float64.</span>
+	price := decimal.<span class="fn">New</span>(<span class="st">"19.99"</span>)
+	total := price.<span class="fn">Times</span>(decimal.<span class="fn">New</span>(<span class="st">"3"</span>))
+	fmt.Println(total) <span class="cm">// 59.97</span>
+
+	fmt.Println(decimal.<span class="fn">New</span>(<span class="st">"0.1"</span>).<span class="fn">Plus</span>(decimal.<span class="fn">New</span>(<span class="st">"0.2"</span>))) <span class="cm">// 0.3</span>
+
+	<span class="cm">// Custom precision via a cloned constructor.</span>
+	c := decimal.Default.<span class="fn">Clone</span>(&amp;decimal.<span class="fn">Config</span>{Precision: decimal.<span class="fn">I64</span>(<span class="st">50</span>)})
+	pi := c.<span class="fn">New</span>(<span class="st">"3.14159265358979323846264338327950288419716939937510"</span>)
+	fmt.Println(pi.<span class="fn">ToFixed</span>(30))
+}
+</code></pre>
+    <pre><code>59.97
+0.3
+3.141592653589793238462643383280</code></pre>
+  </section>
+
+  <!-- USAGE -->
+  <section id="usage">
+    <h2>Usage at a glance</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Idiomatic Go API</h3>
+        <p><code>x.Div(y)</code>, <code>x.Sqrt()</code>, <code>x.Pow(y)</code>, <code>x.Sin()</code> —
+        short names, immutable values, every op returns a new Decimal.</p>
+      </div>
+      <div class="card">
+        <h3>decimal.js parity aliases</h3>
+        <p>All 42 long-form names — <code>DividedBy</code>, <code>NaturalLogarithm</code>,
+        <code>SquareRoot</code>, … — exist so migrated JS code compiles almost verbatim.</p>
+      </div>
+      <div class="card">
+        <h3>Per-context constructors</h3>
+        <p>Clone a constructor per goroutine — precision, rounding and exponent bounds
+        live on it, race-free by design.</p>
+      </div>
+      <div class="card">
+        <h3>Serialization built-in</h3>
+        <p><code>encoding.TextMarshaler</code>, JSON (<code>MarshalJSON</code>/<code>ToJSON</code>),
+        and <code>database/sql</code> <code>Scan</code>/<code>Value</code>.</p>
+      </div>
+      <div class="card">
+        <h3>Errors in one place</h3>
+        <p>Invalid input panics with a <code>[DecimalError]</code>-prefixed message —
+        the direct Go analogue of decimal.js throwing.</p>
+      </div>
+      <div class="card">
+        <h3>Zero dependencies</h3>
+        <p>The standard library only. All arithmetic is hand-rolled on base-1e7
+        coefficient words, exactly like the original.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARITY -->
+  <section id="parity">
+    <h2>Behavioral parity — proven, not claimed</h2>
+    <p>Parity with the real decimal.js is checked mechanically, on every push:</p>
+    <ul class="plain">
+      <li><strong>Ported test suite</strong> — all 61 decimal.js test modules, every
+          assertion in the same order, run white-box in package <code>decimal</code>.</li>
+      <li><strong>Cross-validation</strong> — a shared 1518-line corpus through both the
+          Go port (<code>go run</code>) and the live decimal.js (<code>node</code>);
+          outputs are byte-for-byte identical (<code>xvalidate/</code>).</li>
+      <li><strong>Property tests</strong> — round-trip, commutativity, inverse add/sub
+          &amp; mul/div, sqrt/cbrt/exp-ln inverses, comparison antisymmetry, modulo range.</li>
+      <li><strong>Stress + race</strong> — precision 400–2048, int64/uint64 boundaries, NaN/∞,
+          64 concurrent clone-constructors under <code>-race</code>.</li>
+      <li><strong>Fuzzing</strong> — four targets; only <code>[DecimalError]</code> panics are
+          permitted, anything else fails the build (<code>fuzz_test.go</code>).</li>
+    </ul>
+    <div class="note">
+      The port deliberately keeps two decimal.js quirks rather than "fixing" them:
+      the 1024-significant-digit precision limit on transcendental constants, and
+      construction-time non-rounding (a value keeps its full coefficient until an
+      op rounds it). Rationale in <a href="https://github.com/iSundram/decimal-go/blob/main/docs/DECISIONS.md">docs/DECISIONS.md</a>.
+    </div>
+  </section>
+
+  <!-- BENCHMARKS -->
+  <section id="benchmarks">
+    <h2>Benchmarks — honestly</h2>
+    <p class="muted">
+      Same machine, Node v22 vs Go 1.25, op-only operands at the default precision 20.
+      Ratio &lt; 1 means the Go port is faster. Full table and methodology in
+      <a href="https://github.com/iSundram/decimal-go/blob/main/bench/README.md">bench/README.md</a>.
+    </p>
+    <table>
+      <thead><tr><th>Op</th><th class="r">Go ns/op</th><th class="r">decimal.js ns/op</th><th class="r">Go/JS</th></tr></thead>
+      <tbody>
+        <tr><td>Mul</td><td class="r">332</td><td class="r">1039</td><td class="r">0.32</td></tr>
+        <tr><td>Div&nbsp;@1,000 digits</td><td class="r">20 416</td><td class="r">52 159</td><td class="r">0.39</td></tr>
+        <tr><td>Cbrt</td><td class="r">11 341</td><td class="r">26 129</td><td class="r">0.43</td></tr>
+        <tr><td>Div</td><td class="r">1 184</td><td class="r">2 468</td><td class="r">0.48</td></tr>
+        <tr><td>Sqrt</td><td class="r">8 082</td><td class="r">11 829</td><td class="r">0.68</td></tr>
+        <tr><td>Exp</td><td class="r">40 885</td><td class="r">56 694</td><td class="r">0.72</td></tr>
+        <tr><td>Add</td><td class="r">267</td><td class="r">323</td><td class="r">0.83</td></tr>
+        <tr class="loser"><td>New(string) — parse</td><td class="r">1 642</td><td class="r">1 133</td><td class="r">1.45</td></tr>
+        <tr class="loser"><td>Parse → op → format round trip</td><td class="r">3 047</td><td class="r">1 768</td><td class="r">1.72</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">
+      <strong style="color:#fff">18 of 20</strong> directly comparable op pairs are faster in Go
+      (up to ~3× on multiplication/division). The two slower paths are string parsing and
+      round trips that re-parse inputs — V8's JIT is extremely good at that workload, while
+      Go pays per-parse allocation overhead. We disclose rather than hide this.
+    </p>
+  </section>
+
+  <!-- DOCS -->
+  <section id="docs">
+    <h2>Documentation</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Operations matrix</h3>
+        <p>Every decimal.js op → Go: rounding semantics, edge cases, code locations.
+           <a href="https://github.com/iSundram/decimal-go/blob/main/MATRIX.md">MATRIX.md</a></p>
+      </div>
+      <div class="card">
+        <h3>Migrating from decimal.js</h3>
+        <p>Method-name mapping, construction semantics, concurrency, errors.
+           <a href="https://github.com/iSundram/decimal-go/blob/main/docs/migrating-from-decimal-js.md">Migration guide</a></p>
+      </div>
+      <div class="card">
+        <h3>Design decisions</h3>
+        <p>Why base-1e7, why panic not error, why clones, why the quirks stay.
+           <a href="https://github.com/iSundram/decimal-go/blob/main/docs/DECISIONS.md">DECISIONS.md</a></p>
+      </div>
+      <div class="card">
+        <h3>API reference</h3>
+        <p>Full package docs with runnable examples on
+           <a href="https://pkg.go.dev/github.com/iSundram/decimal-go">pkg.go.dev</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="rule"></div>
+    <p><strong style="color:#fff">decimal-go</strong> — created during the Port Mortem 2026 hackathon.</p>
+    <p>Behavior inspired by <a href="https://github.com/MikeMcl/decimal.js">decimal.js</a>
+       by Michael Mclaughlin — huge thanks for the original library, its API and its test suite.</p>
+    <p>MIT License · <a href="https://github.com/iSundram/decimal-go">GitHub</a> ·
+       <a href="https://github.com/iSundram/decimal-go/blob/main/CHANGELOG.md">Changelog</a> ·
+       <a href="https://github.com/iSundram/decimal-go/blob/main/SECURITY.md">Security</a> ·
+       <a href="https://github.com/iSundram/decimal-go/blob/main/CONTRIBUTING.md">Contributing</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

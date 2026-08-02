@@ -11,8 +11,8 @@ binary, comparison and formatting operations with the same config
 bash xvalidate/compare.sh   # go run + node, sort, diff; empty diff = PASS
 ```
 
-Requires `go` and `node` with `decimal.js` available (point `DECIMAL_JS_PATH`
-at the original lib, e.g. `/root/hackathon/decimal.js/decimal.js`).
+Requires `go` and `node` with the `decimal.js` sources available (point
+`DECIMAL_JS_PATH` at them; the default is `/root/hackathon/decimal.js/decimal.js`).
 
 ## Coverage
 

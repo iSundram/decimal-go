@@ -1,7 +1,7 @@
 # Porting decimal.js test modules to Go
 
-Each JS module in `/root/hackathon/decimal.js/test/modules/<name>.js` is ported
-to `/root/hackathon/decimal-go/<name>_test.go` in package `decimal` (white-box).
+Each JS module in the original `decimal.js/test/modules/<name>.js` is ported
+to decimal-go as `<name>_test.go` in package `decimal` (white-box).
 
 Goal: a 1:1 behavioral port of every assertion, keeping the same order and
 coverage. Do not skip tests.
@@ -55,9 +55,9 @@ coverage. Do not skip tests.
 - Keep test order and do not drop assertions.
 - If a test fails because of a suspected library bug, double-check your
   conversion first (compare against running the same snippet in node with
-  the original decimal.js: `cd /root/hackathon/decimal.js && node -e "..."`).
+  the original decimal.js: `node -e "..."` from a decimal.js checkout).
   If it's a real library bug, report it in your final message, do NOT fix it.
-- Run `cd /root/hackathon/decimal-go && go test -run TestXxx` until green.
+- Run `go test -run TestXxx` from the decimal-go repo root until green.
 - Do NOT run git commands.
 - Test function names: `Test<Module>` with first letter capitalised,
   e.g. `toFixed.js` → `TestToFixed`, `toDP.js` → `TestToDP`, `dpSd.js` →

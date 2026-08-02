@@ -34,7 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Benchmarks**: Go vs decimal.js op benchmarks with an honest comparison
   (`bench/README.md`, `bench/results.txt`).
 - **Documentation**: `MATRIX.md` (operation-by-operation matrix with rounding
-  semantics and edge cases), install/quick-start in the README,
+  semantics and edge cases), `docs/DECISIONS.md` (design-decision record),
+  install/quick-start in the README,
   `docs/migrating-from-decimal-js.md`, package overview in `doc.go`.
 - **CI**: gofmt, go vet, staticcheck, unit + race tests, coverage summary,
   and per-target fuzzing on every push.

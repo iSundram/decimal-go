@@ -11,7 +11,7 @@
 </p>
 
 <p>
-  <img src="https://img.shields.io/badge/Tests-62%20modules%20green-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/Test%20modules-61%20of%2061%20ported-brightgreen" alt="Tests">
   <img src="https://img.shields.io/badge/Race%20detector-Clean-success" alt="Race detector">
   <img src="https://img.shields.io/badge/Cross--validated-1518%20cases-blue" alt="Cross-validated">
   <img src="https://img.shields.io/badge/Perf-Arithmetic%20faster%20(parsing%20slower)-blueviolet" alt="Performance">
@@ -66,7 +66,7 @@ import (
 )
 
 func main() {
-	// Money math that never flaunts float rounding.
+	// Money math without the float rounding surprises of float64.
 	price := decimal.New("19.99")
 	qty := decimal.New("3")
 	total := price.Times(qty)
@@ -91,15 +91,17 @@ Output:
 ```
 
 See the [example tests](example_test.go), the [operations matrix](MATRIX.md),
-the [decimal.js migration guide](docs/migrating-from-decimal-js.md) and the
+the [decimal.js migration guide](docs/migrating-from-decimal-js.md), the
+[design decisions](docs/DECISIONS.md) and the
 [changelog](CHANGELOG.md) for more.
 
 ## <img src="assets/header_status.svg" alt="Status" align="absmiddle">
 
 > **Test suite fully ported.**
 
-The complete `decimal.js` test suite is ported to Go: all 62 test modules are
-covered by white-box tests in package `decimal`, and `go test ./...` is green.
+The complete `decimal.js` test suite (61 modules) is ported to Go: every
+module is covered by white-box tests in package `decimal`, and
+`go test ./...` is green.
 
 - Run the suite: `go test -count=1 ./...`
 - Run with the race detector: `go test -race -count=1 .`
@@ -135,9 +137,11 @@ additional committed tests and tooling:
 - **Operations matrix** ([`MATRIX.md`](MATRIX.md)) documents every op, its
   rounding semantics and edge cases.
 - **Benchmarks** ([`bench/README.md`](bench/README.md) + [`results.txt`](bench/results.txt)):
-  honest Go-vs-JS comparison (18 of 20 comparable ops faster in Go, up to ~3×
-  on multiplication/division); `New(string)` parsing is ~1.45× slower and
-  parse+format round trips ~1.7× slower, as real-world work re-parses inputs.
+  honest Go-vs-JS comparison (18 of 20 directly comparable op pairs are
+  faster in Go, up to ~3× on multiplication and division); `New(string)`
+  parsing is ~1.45× slower and parse+op+format round trips ~1.7× slower,
+  because real-world benchmarks that re-parse inputs pay Go's allocation
+  overhead while JS string parsing is heavily JIT-optimised.
 
 ## <img src="assets/header_contributing.svg" alt="Contributing" align="absmiddle">
 

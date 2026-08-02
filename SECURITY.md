@@ -3,8 +3,8 @@
 ## Reporting a vulnerability
 
 Please do **not** open a public issue for security problems. Report them
-privately by emailing the maintainer or by opening a GitHub security advisory
-at https://github.com/iSundram/decimal-go/security/advisories/new .
+privately by opening a GitHub security advisory at
+https://github.com/iSundram/decimal-go/security/advisories/new .
 
 Include:
 

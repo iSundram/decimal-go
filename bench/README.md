@@ -13,7 +13,7 @@ port is faster.**
 
 ## Requirements
 
-- Go 1.22+
+- Go 1.25+
 - Node.js (tested with v22)
 - The original decimal.js checkout, path via `DECIMAL_JS_PATH`
   (default `/root/hackathon/decimal.js/decimal.js`).

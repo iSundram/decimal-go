@@ -2,9 +2,9 @@
 
 A mapping of every decimal.js v10.6.0 operation to its decimal-go counterpart,
 its rounding semantics, and the edge cases covered by the ported test suite
-plus the proof tests added in this worker. All Go behavior matches the
+plus the additional proof tests. All Go behavior matches the
 original JS implementation, verified by `xvalidate/` (byte-for-byte output
-parity on the shared corpus) and the worker commits.
+parity on the shared corpus) and the regression tests.
 
 ## Core arithmetic
 
@@ -44,7 +44,7 @@ parity on the shared corpus) and the worker commits.
   state is per-constructor (concurrency-safe), matching decimal.js's
   `external` flag model.
 - `taylorSeries` (`trig.go:91`) terminates on convergence digits; the
-  `precisionLimitExceeded` panic (sd > 1024 bits) is a **faithful** port of
+  `precisionLimitExceeded` panic (more significant digits than `maxDigits`) is a **faithful** port of
   decimal.js: `getPi` estimates required precision and throws when the result
   needs more than the configured `maxDigits` (1024), leaving config mutated
   until the user resets it, exactly like the original.
@@ -80,7 +80,7 @@ parity on the shared corpus) and the worker commits.
 
 `Cmp` returns `float64 -1/0/1` (or NaN for NaN operand) for JS parity; the
 boolean comparators `Eq Gt Gte Lt Lte`, predicates `IsNaN IsFinite IsInt
-IsNeg IsPos IsZero` all present, with `IsInteger`/`IsNegative`/ants aliases.
+IsNeg IsPos IsZero` all present, with `IsInteger`/`IsNegative`/`IsPositive` aliases.
 
 ## Statics (constructor)
 
@@ -112,7 +112,7 @@ trunc`, plus `clone`/`config`/`Default`/`New`/`IsDecimal`.
 - Go `new(string)` parsing benchmarks ~1.3× slower than decimal.js; the full
   add-from-string round trip ~1.5× slower; op-only arithmetic (mul/div/sqrt/
   ln/trig) is 2–6× faster. See `bench/README.md` for the full ratio table.
-- deconv: the port preserves decimal.js's error and configuration semantics,
+- Design intent: the port preserves decimal.js's error and configuration semantics,
   including the 1024-digit `precisionLimitExceeded` for transcendental
   constants and the shared-constructor model: one clone per concurrent
   context (module-level mutable flags were moved onto the Constructor to make
