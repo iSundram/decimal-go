@@ -30,7 +30,13 @@
 
 ## <img src="assets/header_status.svg" alt="Status" align="absmiddle">
 
-> **Work in progress.**
+> **Test suite fully ported.**
+
+The complete `decimal.js` test suite is ported to Go: all 62 test modules are
+covered by white-box tests in package `decimal`, and `go test ./...` is green.
+
+- Run the suite: `go test -count=1 ./...`
+- Porting rules live in [`PORTING_TESTS.md`](PORTING_TESTS.md).
 
 ## <img src="assets/header_contributing.svg" alt="Contributing" align="absmiddle">
 
