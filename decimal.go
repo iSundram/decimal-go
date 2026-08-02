@@ -1,12 +1,3 @@
-// Package decimal provides an arbitrary-precision decimal floating-point type.
-//
-// It is a Go port of the decimal.js library (v10.6.0) and aims to preserve
-// its behavior, including its rounding modes, error conditions and string
-// formatting rules, while exposing an idiomatic Go API.
-//
-// The value of a Decimal is sign * coefficient * 10^exponent, where the
-// coefficient is stored as a slice of base 1e7 words. A nil digits slice
-// represents Infinity (sign != 0) or NaN (sign == 0).
 package decimal
 
 import (

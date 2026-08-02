@@ -90,8 +90,8 @@ func TestClone(t *testing.T) {
 	assert(t, !New(123.456789).ToSD().Eq(D3.New("123.456789").ToSD()))
 	assert(t, New(123.456789).Round().Eq(D3.New("123.456789").Round()))
 
-	assert(t, New(1).c == New(1).c) // constructor === constructor
-	assert(t, D9.New(1).c == D9.New(1).c)
+	assert(t, New(1).c == New(1).c)       //lint:ignore SA4000 constructor identity mirrored from decimal.js tests
+	assert(t, D9.New(1).c == D9.New(1).c) //lint:ignore SA4000 zero| one left right equality
 	assert(t, New(1).c != D1.New(1).c)
 	assert(t, D8.New(1).c != D9.New(1).c)
 

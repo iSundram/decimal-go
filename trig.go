@@ -129,7 +129,7 @@ func taylorSeries(c *Constructor, n int64, x, y *Decimal, isHyperbolic bool) *De
 			}
 		}
 
-		u, y, t = y, t, u
+		u, y, t = y, t, u //lint:ignore SA4006 parity port rotation
 	}
 
 	c.external = true

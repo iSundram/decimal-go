@@ -138,6 +138,6 @@ func (x *Decimal) ToString() string { return x.String() }
 
 // MarshalJSON implements json.Marshaler: the value is marshalled as a JSON
 // string matching the valueOf() representation (decimal.js toJSON behaviour).
-func (x *Decimal) MarshalJSON() ([]byte, error) {
+func (x Decimal) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + x.ValueOf() + `"`), nil
 }

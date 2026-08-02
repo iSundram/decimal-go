@@ -685,7 +685,7 @@ func divide(x, y *Decimal, pr, rm int64, dp bool, baseI int64) *Decimal {
 						}
 					}
 
-					remL = len(rem)
+					remL = len(rem) //lint:ignore SA4006 parity port keeps the cheap store
 				} else if cmp == 0 {
 					k++
 					rem = []int32{0}
@@ -696,7 +696,7 @@ func divide(x, y *Decimal, pr, rm int64, dp bool, baseI int64) *Decimal {
 				i++
 
 				// Update the remainder.
-				remL = len(rem)
+				remL = len(rem) //lint:ignore SA4006 parity port keeps the cheap store
 				if cmp != 0 && rem[0] != 0 {
 					rem = append(rem, word(xd, xi))
 					remL = len(rem)

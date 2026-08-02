@@ -36,6 +36,64 @@
 - Maintain high test compatibility.
 - Produce clean, well-documented Go code.
 
+## <img src="assets/header_install.svg" alt="Installation" align="absmiddle">
+
+`decimal-go` has **zero external dependencies** and requires Go 1.25+.
+
+```sh
+go get github.com/iSundram/decimal-go
+```
+
+Then import it in your code:
+
+```go
+import "github.com/iSundram/decimal-go"
+```
+
+Values are arbitrary-precision and immutable; every operation returns a new
+value. The package-level `New` uses the default constructor (precision 20,
+half-up rounding).
+
+## <img src="assets/header_quickstart.svg" alt="Quick Start" align="absmiddle">
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/iSundram/decimal-go"
+)
+
+func main() {
+	// Money math that never flaunts float rounding.
+	price := decimal.New("19.99")
+	qty := decimal.New("3")
+	total := price.Times(qty)
+	fmt.Println(total) // 59.97
+
+	// Exact value parsing from strings, integers, floats or *big.Int.
+	fmt.Println(decimal.New("0.1").Plus(decimal.New("0.2"))) // 0.3
+
+	// Custom precision via a cloned constructor.
+	c := decimal.Default.Clone(&decimal.Config{Precision: decimal.I64(50)})
+	pi := c.New("3.14159265358979323846264338327950288419716939937510")
+	fmt.Println(pi.ToFixed(30))
+}
+```
+
+Output:
+
+```text
+59.97
+0.3
+3.141592653589793238462643383280
+```
+
+See the [example tests](example_test.go), the [operations matrix](MATRIX.md),
+the [decimal.js migration guide](docs/migrating-from-decimal-js.md) and the
+[changelog](CHANGELOG.md) for more.
+
 ## <img src="assets/header_status.svg" alt="Status" align="absmiddle">
 
 > **Test suite fully ported.**
