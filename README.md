@@ -4,9 +4,17 @@
 <img src="assets/tagline.svg" alt="An arbitrary-precision decimal arithmetic library for Go.">
 
 <p>
-  <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white" alt="Go">
+  <img src="https://img.shields.io/badge/Go-1.25%2B-00ADD8?logo=go&logoColor=white" alt="Go">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
-  <img src="https://img.shields.io/badge/Status-Work%20In%20Progress-orange" alt="Status">
+  <img src="https://img.shields.io/badge/decimal.js-v10.6.0-informational" alt="decimal.js">
+  <img src="https://img.shields.io/badge/Dependencies-Zero-lightgrey" alt="Dependencies">
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Tests-62%20modules%20green-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/Race%20detector-Clean-success" alt="Race detector">
+  <img src="https://img.shields.io/badge/Cross--validated-1518%20cases-blue" alt="Cross-validated">
+  <img src="https://img.shields.io/badge/Perf-Arithmetic%20faster%20(parsing%20slower)-blueviolet" alt="Performance">
 </p>
 
 <p>
@@ -68,9 +76,10 @@ additional committed tests and tooling:
   type (number, string, `big.Int`, `Decimal`, `-0`, NaN, ±Infinity) accepted.
 - **Operations matrix** ([`MATRIX.md`](MATRIX.md)) documents every op, its
   rounding semantics and edge cases.
-- **Benchmarks** ([`bench/README.md`](bench/README.md)): honest Go-vs-JS
-  comparison; op-only arithmetic in Go is 2–6× faster, while `New(string)`
-  parsing is ~1.3× slower and parse+add round trips ~1.5× slower.
+- **Benchmarks** ([`bench/README.md`](bench/README.md) + [`results.txt`](bench/results.txt)):
+  honest Go-vs-JS comparison (18 of 20 comparable ops faster in Go, up to ~3×
+  on multiplication/division); `New(string)` parsing is ~1.45× slower and
+  parse+format round trips ~1.7× slower, as real-world work re-parses inputs.
 
 ## <img src="assets/header_contributing.svg" alt="Contributing" align="absmiddle">
 
