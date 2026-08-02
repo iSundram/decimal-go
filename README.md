@@ -36,7 +36,41 @@ The complete `decimal.js` test suite is ported to Go: all 62 test modules are
 covered by white-box tests in package `decimal`, and `go test ./...` is green.
 
 - Run the suite: `go test -count=1 ./...`
+- Run with the race detector: `go test -race -count=1 .`
 - Porting rules live in [`PORTING_TESTS.md`](PORTING_TESTS.md).
+
+## Validation added in this fork
+
+Beyond the ported suites, exact parity with the live `decimal.js` is proven by
+additional committed tests and tooling:
+
+- **Cross-validation** ([`xvalidate/`](xvalidate/)): a shared corpus of
+  values is run through both decimal-go (`go run`) and the real
+  decimal.js (`node`); the two outputs are byte-for-byte identical
+  (`bash xvalidate/compare.sh`, 1518/1518 lines).
+- **API parity** ([`parity.go`](parity.go)): the 42 decimal.js long method
+  names and `toJSON`/`MarshalJSON` exist as aliases and are `equal`-checked
+  against the primary methods — mirroring the real methods in `decimal.js`.
+- **Property-based tests** ([`property_test.go`](property_test.go)):
+  round-trip, commutativity,
+  add/sub & mul/div inverses, sqrt/cbrt/exp-log inverses, comparisons,
+  exact sqrt, modulo range.
+- **Stress + race tests** ([`stress_test.go`](stress_test.go)): precision
+  400–2048, integer boundaries, NaN/Infinity, and 64 concurrent
+  clone-constructors under `-race`. A genuine data race inherited from
+  decimal.js's module globals (`external`/`inexact`/`quadrant`) was found and
+  fixed by moving those flags onto the `Constructor` (matching decimal.js's
+  "one clone per context" model).
+- **Regression tests** ([`regression_test.go`](regression_test.go)): the three
+  bugs fixed while porting (pow10 overflow, Pow negative-base index,
+  `1^±Inf`) are locked in.
+- **Input matrix** ([`input_test.go`](input_test.go)): every decimal.js value
+  type (number, string, `big.Int`, `Decimal`, `-0`, NaN, ±Infinity) accepted.
+- **Operations matrix** ([`MATRIX.md`](MATRIX.md)) documents every op, its
+  rounding semantics and edge cases.
+- **Benchmarks** ([`bench/README.md`](bench/README.md)): honest Go-vs-JS
+  comparison; op-only arithmetic in Go is 2–6× faster, while `New(string)`
+  parsing is ~1.3× slower and parse+add round trips ~1.5× slower.
 
 ## <img src="assets/header_contributing.svg" alt="Contributing" align="absmiddle">
 
