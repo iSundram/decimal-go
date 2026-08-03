@@ -15,6 +15,7 @@
   <img src="https://img.shields.io/badge/Race%20detector-Clean-success" alt="Race detector">
   <img src="https://img.shields.io/badge/Cross--validated-1518%20cases-blue" alt="Cross-validated">
   <img src="https://img.shields.io/badge/Perf-Arithmetic%20faster%20(parsing%20slower)-blueviolet" alt="Performance">
+  <img src="https://img.shields.io/badge/Playground-WASM%20in%20browser-brightgreen" alt="Playground">
 </p>
 
 <p>
@@ -91,6 +92,8 @@ Output:
 ```
 
 See the [documentation site](https://decimal-go.github.io/), the
+[interactive playground](https://decimal-go.github.io/playground/) (the real
+library compiled to WebAssembly, running in your browser), the
 [example tests](example_test.go), the [operations matrix](MATRIX.md),
 the [decimal.js migration guide](docs/migrating-from-decimal-js.md), the
 [design decisions](docs/DECISIONS.md) and the

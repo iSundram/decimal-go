@@ -19,6 +19,15 @@ total := price.Times(decimal.New("3"))
 fmt.Println(total) // 59.97 — no float64 surprises
 ```
 
+## Links
+
+- **Repository**: <https://github.com/iSundram/decimal-go>
+- **Documentation site**: <https://decimal-go.github.io/>
+- **Browser playground** (the library compiled to WebAssembly — try `sqrt(2)`,
+  `plus(0.1, 0.2)` or `toFixed(pi, 30)` with no install):
+  <https://decimal-go.github.io/playground/>
+- **Package docs**: <https://pkg.go.dev/github.com/iSundram/decimal-go>
+
 ## Why this port
 
 `float64` cannot represent money, rates, or high-precision measurements
@@ -119,6 +128,17 @@ Go's advantage *widens* as precision grows (Div@1000: 0.39×).
 | Fuzzing | `fuzz_test.go` | 4 targets; only `[DecimalError]` panics are permitted |
 | Encoding | `encoding.go` | JSON, text, and `database/sql` integration |
 | CI | `.github/workflows/ci.yml` | gofmt, vet, staticcheck, unit + race tests, coverage, per-target fuzz |
+
+## Live playground (WASM)
+
+The library is compiled to WebAssembly and runs in the browser at
+`decimal-go.github.io/playground/` — no server, no install. `cmd/playground`
+exposes ~45 operations through `syscall/js` (build-tagged `js && wasm`, so it
+is excluded from host builds), and a small expression editor lets visitors
+type things like `plus(0.1, 0.2)`, `sqrt(2)`, `div(1, 3)` or
+`toFixed(pi, 30)` and see the real Go implementation's answers. The WASM
+binary is rebuilt by the docs-sync workflow on every push to `main`, keeping
+the deployed binary in lockstep with the library.
 
 ## Status
 

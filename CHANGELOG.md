@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+No changes yet beyond v0.1.0.
+
+## [v0.1.0] - 2026-08-02
+
 ### Added (this milestone)
 
 - **Cross-validation harness** (`xvalidate/`): 1518-line corpus of unary,
@@ -37,5 +41,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   semantics and edge cases), `docs/DECISIONS.md` (design-decision record),
   install/quick-start in the README,
   `docs/migrating-from-decimal-js.md`, package overview in `doc.go`.
+- **Documentation site**: `decimal-go.github.io` — a dark-themed static site
+  (same palette and Raleway typeface as the logo) with install, usage, parity,
+  benchmark and docs sections; auto-synced from `docs/` on every push.
+- **Browser playground**: `decimal-go.github.io/playground/` — the real
+  library compiled to WebAssembly (`cmd/playground`, `syscall/js`), exposing
+  ~45 operations in an expression editor; the WASM binary is built by the
+  sync workflow in CI.
 - **CI**: gofmt, go vet, staticcheck, unit + race tests, coverage summary,
-  and per-target fuzzing on every push.
+  and per-target fuzzing on every push; a second workflow syncs `docs/`
+  (including the freshly built playground binary) to the org Pages repo.
+
+[unreleased]: https://github.com/iSundram/decimal-go/compare/v0.1.0...HEAD
+[v0.1.0]: https://github.com/iSundram/decimal-go/releases/tag/v0.1.0

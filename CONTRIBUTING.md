@@ -22,3 +22,23 @@ Thank you for your interest in contributing to decimal-go! We welcome all contri
 ## Reporting Issues
 
 If you find a bug or have a feature request, please open an issue on GitHub. Include as much detail as possible, such as code snippets and expected vs. actual behavior.
+
+## Releases & Changelog
+
+Releases and the changelog are fully automated — no manual editing:
+
+1. **Label your PR** (so it is grouped correctly): `feature`, `enhancement`,
+   `fix`, `bug`, `documentation`, `docs`, `tests`, `quality`, or `ci`.
+   Unlabelled PRs default to the `patch` group. Prefix labels like `docs:`
+   are applied automatically by the autolabeler.
+2. **Merge the PR.** The [Release Drafter](.github/workflows/release-drafter.yml)
+   workflow updates the draft release notes, and the
+   [Update CHANGELOG](.github/workflows/update-changelog.yml) workflow
+   rewrites the `[Unreleased]` section of `CHANGELOG.md` automatically.
+3. **Publish a release**: open a PR titled `release` with the `release`
+   label. When it merges, the draft is published as a versioned release
+   (version bumped from the labels), and the
+   [Finalize CHANGELOG](.github/workflows/finalize-changelog.yml) workflow
+   moves `[Unreleased]` into the versioned section with the release date.
+
+Add a `skip-changelog` label to any PR you do not want mentioned.

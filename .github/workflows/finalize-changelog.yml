@@ -1,0 +1,39 @@
+name: Finalize CHANGELOG
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.repository == 'iSundram/decimal-go'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Move [Unreleased] into versioned section
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python .github/scripts/update_changelog.py finalize --tag "${{ github.event.release.tag_name }}"
+
+      - name: Commit changelog if changed
+        run: |
+          if git diff --quiet CHANGELOG.md; then
+            echo "no changes"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add CHANGELOG.md
+            git commit -m "docs: finalize CHANGELOG for ${{ github.event.release.tag_name }}"
+            git push
+          fi

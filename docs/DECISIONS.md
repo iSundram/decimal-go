@@ -132,6 +132,15 @@ The module imports only the standard library. This is a direct consequence of
 the base-1e7 representation (§2): all arithmetic is hand-rolled on `int32`
 slices, and decimal.js itself is dependency-free.
 
+## 9a. Browser playground
+
+`cmd/playground` compiles the library to WebAssembly for the docs site. It is
+build-tagged `js && wasm` so `go test ./...` and ordinary builds never see it.
+The playground is a demo surface, not an API: it exposes a small, string-based
+subset of operations via `syscall/js` and is deliberately not a supported
+interface. The binary is rebuilt in CI by the docs-sync workflow, so the
+deployed playground always matches the pushed library.
+
 ## 10. Versioning
 
 `v0.1.0` is the first tagged release. While the API is behavior-complete
