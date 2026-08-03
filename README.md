@@ -111,7 +111,7 @@ module is covered by white-box tests in package `decimal`, and
 - Run with the race detector: `go test -race -count=1 .`
 - Porting rules live in [`PORTING_TESTS.md`](PORTING_TESTS.md).
 
-## Validation added in this fork
+## <img src="assets/header_validation.svg" alt="Validation added in this fork" align="absmiddle">
 
 Beyond the ported suites, exact parity with the live `decimal.js` is proven by
 additional committed tests and tooling:
@@ -184,6 +184,6 @@ This project is released under the MIT License.
 
 <div align="center">
 
-Made with Go.
+Made with <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Go_Logo_Blue.svg" height="22" alt="Go" align="absmiddle">.
 
 </div>
