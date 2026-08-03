@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>decimal-go — arbitrary-precision decimal arithmetic for Go</title>
 <meta name="description" content="A port of decimal.js to Go with byte-for-byte behavioral parity, zero dependencies.">
-<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
@@ -106,6 +106,15 @@ nav a:hover { color: var(--text-hi); }
   border-bottom: 1px solid var(--line);
 }
 .hero img.hero-logo { height: 88px; border-radius: 10px; }
+.hero .wordmark {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--text-hi);
+  font-size: clamp(40px, 9vw, 76px);
+  line-height: 1.1;
+  display: inline-block;
+}
 .hero h1 {
   font-weight: 500;
   font-size: 40px;
@@ -249,7 +258,7 @@ footer p { color: var(--text-dim); margin-bottom: 6px; }
 
   <!-- HERO -->
   <section class="hero">
-    <img class="hero-logo" src="assets/logo2x.svg" alt="decimal-go">
+    <div class="wordmark">decimal-go</div>
     <h1>Arbitrary-precision decimal arithmetic, ported to Go</h1>
     <p class="tagline">
       A behavioral port of <a href="https://github.com/MikeMcl/decimal.js">decimal.js</a> v10.6.0:
