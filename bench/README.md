@@ -2,7 +2,7 @@
 
 Two runners measure the same operations on identical inputs:
 
-- **Go** — `bench_go_test.go` (package `decimal`, black-box style), timed by
+- **Go** — `bench_go_test.go` (package `decimal`), timed by
   `go test -bench`. Operands are pre-created once, then each op runs in a
   tight loop, so the "op-only" cost is measured.
 - **JS** — `bench/js/bench.js` (Node), mirrors the Go cases exactly with the
@@ -33,13 +33,13 @@ script (`bench/go_js_compare.py`) merges Go's sub-benchmarks (e.g.
 The Go/JS numbers are only directly comparable when the **same work** is
 measured. Known asymmetries, worth remembering before quoting any ratio:
 
-1. Go `New(string)` is slightly slower than JS construction (~1.3x), and a
-   full round-trip (`New`+op+`ValueOf`) is ~1.5x slower, because JS string
+1. Go `New(string)` is slower than JS construction (~1.45x), and a
+   full round-trip (`New`+op+`ValueOf`) is ~1.7x slower, because JS string
    parsing is highly JIT-optimised while Go pays allocation overhead per
    parse. Benchmarks that re-parse inputs every iteration (real-world style)
    therefore narrow Go's advantage.
 2. Op-only figures (the default below) isolate the arithmetic kernel; this is
-   the fairest comparison of raw speed and is where Go is typically 2-6x
+   the fairest comparison of raw speed and is where Go is typically 1.5-3x
    faster.
 3. Alloc/op is reported by Go but not JS (V8 doesn't surface per-op
    allocation) — omit allocation from cross-language claims.
@@ -53,25 +53,27 @@ identical between the two suites.
 
 Same machine, Node v22, Go from the repo root, op-only operands at the default
 precision 20 (and 100/1000 where both sides can): **ratio < 1 means the Go
-port is faster.** 18 of 20 comparable pairs go Go's way; the only slower paths
-are string construction and parse+op+format round trips.
+port is faster.** 23 of 25 directly comparable pairs go Go's way; the only
+slower paths are string construction (1.45x) and parse+op+format round trips
+(1.72x).
 
 | op@precision | Go ns/op | JS ns/op | Go/JS |
 |---|---|---|---|
 | Mul@20   |  332.3 | 1039.0 | 0.32 |
 | Div@1000 | 20416.0 | 52159.3 | 0.39 |
 | Cbrt@20  | 11341.0 | 26129.1 | 0.43 |
-| Atan@20  | 1503.0 |  3360.2 | 0.45 |
+| Atan@20  | 1503.0 |  3303.9 | 0.45 |
 | Cos@20   | 20132.0 | 42136.8 | 0.48 |
+| Div@100  | 3030.0 | 6299.5 | 0.48 |
 | Div@20   | 1184.0 | 2468.3 | 0.48 |
 | Tan@20   | 38750.0 | 77092.3 | 0.50 |
 | PowFraction@20 | 93816.0 | 179369.0 | 0.52 |
 | PowInt@20 | 3406.0 | 6194.3 | 0.55 |
 | LogBase10@20 | 67097.0 | 119776.5 | 0.56 |
 | Ln@20    | 50497.0 | 83774.0 | 0.60 |
-| DivToInt@20 | 425.0 | 665.0 | 0.64 |
+| DivToInt@20 | 424.6 | 664.7 | 0.64 |
 | Sqrt@20  | 8082.0 | 11828.6 | 0.68 |
-| ToFixed@20 | 693.8 | 1011.4 | 0.69 |
+| ToFixed@20 | 692.8 | 1011.4 | 0.68 |
 | Sin@20   | 21844.0 | 31453.7 | 0.69 |
 | Exp@20   | 40885.0 | 56693.8 | 0.72 |
 | ToPrecision@20 | 657.4 | 879.6 | 0.75 |

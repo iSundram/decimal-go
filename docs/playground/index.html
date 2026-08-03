@@ -214,7 +214,7 @@ footer p { margin-bottom: 4px; }
         <span>decimal-go — one expression per line</span>
         <span class="status"><span class="dot" id="dot"></span><span id="status">loading wasm…</span></span>
       </div>
-      <textarea id="code" placeholder="1.5 plus 2.25&#10;times(19.99, 3)&#10;sqrt(2)&#10;0.1 plus 0.2"></textarea>
+      <textarea id="code" placeholder="plus(0.1, 0.2)&#10;times(19.99, 3)&#10;sqrt(2)&#10;div(1, 3)"></textarea>
       <div class="actions" style="padding: 0 16px 16px; margin: 0;">
         <button class="btn solid" id="run" disabled>Run</button>
         <button class="btn" id="clear" disabled>Clear</button>
@@ -240,7 +240,7 @@ footer p { margin-bottom: 4px; }
 <footer>
   <div class="container">
     <p><strong style="color:#fff">decimal-go</strong> — Go port of <a href="https://github.com/MikeMcl/decimal.js">decimal.js</a> v10.6.0. MIT License.</p>
-    <p>Every operation below runs the actual Go library via WASM — the same code that passes 1518 cross-validation cases.</p>
+    <p>Every operation below runs the actual Go library via WASM — the same code that passes 1518 cross-validation result lines.</p>
   </div>
 </footer>
 

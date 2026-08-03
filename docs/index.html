@@ -277,7 +277,7 @@ footer p { color: var(--text-dim); margin-bottom: 6px; }
       <span>MIT License</span>
       <span>Zero dependencies</span>
       <span>61/61 test modules ported</span>
-      <span>1518 cases cross-validated</span>
+      <span>1518 result lines cross-validated</span>
       <span>Race detector clean</span>
       <span>96% coverage</span>
     </div>
@@ -325,8 +325,9 @@ func main() {
       </div>
       <div class="card">
         <h3>decimal.js parity aliases</h3>
-        <p>All 42 long-form names — <code>DividedBy</code>, <code>NaturalLogarithm</code>,
-        <code>SquareRoot</code>, … — exist so migrated JS code compiles almost verbatim.</p>
+        <p>Every decimal.js long-form name — <code>DividedBy</code>, <code>NaturalLogarithm</code>,
+        <code>SquareRoot</code>, … — exists (39 as aliases, <code>Plus</code>/<code>Minus</code>/<code>Times</code>/<code>ValueOf</code>
+        as primary names), so migrated JS code compiles almost verbatim.</p>
       </div>
       <div class="card">
         <h3>Per-context constructors</h3>
@@ -358,9 +359,10 @@ func main() {
     <ul class="plain">
       <li><strong>Ported test suite</strong> — all 61 decimal.js test modules, every
           assertion in the same order, run white-box in package <code>decimal</code>.</li>
-      <li><strong>Cross-validation</strong> — a shared 1518-line corpus through both the
+      <li><strong>Cross-validation</strong> — a shared corpus through both the
           Go port (<code>go run</code>) and the live decimal.js (<code>node</code>);
-          outputs are byte-for-byte identical (<code>xvalidate/</code>).</li>
+          outputs are byte-for-byte identical: 1518/1518 result lines
+          (66 inputs × 23 ops, <code>xvalidate/</code>).</li>
       <li><strong>Property tests</strong> — round-trip, commutativity, inverse add/sub
           &amp; mul/div, sqrt/cbrt/exp-ln inverses, comparison antisymmetry, modulo range.</li>
       <li><strong>Stress + race</strong> — precision 400–2048, int64/uint64 boundaries, NaN/∞,
@@ -372,7 +374,11 @@ func main() {
       The port deliberately keeps two decimal.js quirks rather than "fixing" them:
       the 1024-significant-digit precision limit on transcendental constants, and
       construction-time non-rounding (a value keeps its full coefficient until an
-      op rounds it). Rationale in <a href="https://github.com/iSundram/decimal-go/blob/main/docs/DECISIONS.md">docs/DECISIONS.md</a>.
+      op rounds it). It also inherits two bugs found upstream by differential
+      fuzzing — <code>log(0, base)</code> for <code>0 &lt; base &lt; 1</code>, and
+      a <code>toFraction()</code> hang under <code>rounding: 3</code> — preserved
+      for parity until upstream fixes them. Rationale in
+      <a href="https://github.com/iSundram/decimal-go/blob/main/docs/DECISIONS.md">docs/DECISIONS.md</a>.
     </div>
   </section>
 
@@ -401,7 +407,7 @@ func main() {
     </table>
     </div>
     <p class="muted">
-      <strong style="color:#fff">18 of 20</strong> directly comparable op pairs are faster in Go
+      <strong style="color:#fff">23 of 25</strong> directly comparable pairs are faster in Go
       (up to ~3× on multiplication/division). The two slower paths are string parsing and
       round trips that re-parse inputs — V8's JIT is extremely good at that workload, while
       Go pays per-parse allocation overhead. We disclose rather than hide this.

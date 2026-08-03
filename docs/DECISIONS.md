@@ -16,7 +16,8 @@ conflict, the original behavior wins. Examples:
 - Transcendental functions panic with `[DecimalError] Precision limit exceeded`
   when they would need more than 1024 significant digits of π or ln10 — a
   faithful port of decimal.js's `precisionLimitExceeded`, including the
-  original's quirk of leaving the constructor config mutated until reset.
+  original's quirk of leaving the constructor config mutated until reset on
+  the π/trig path (the ln10 path restores config before panicking).
 
 Rationale: the value of the port is provable fidelity (see `xvalidate/`, which
 diffs byte-for-byte against the real decimal.js). Introducing "improvements"
@@ -120,9 +121,10 @@ compute those cases).
 ## 8. Benchmark honesty
 
 `bench/README.md` documents the boundaries of every ratio:
-op-only figures isolate the arithmetic kernel (Go wins ~2–6×);
-`New(string)` is ~1.45× slower (Go allocation overhead vs. JIT-optimised JS
-string parsing); round trips that re-parse inputs are also slower. We do not
+op-only figures isolate the arithmetic kernel (Go wins, up to ~3× on Mul,
+1.5–2× on most others); `New(string)` is ~1.45× slower (Go allocation
+overhead vs. JIT-optimised JS string parsing); round trips that re-parse
+inputs are ~1.7× slower. We do not
 publish "decimal-go is faster than decimal.js" without the qualification —
 comparison notes live in `bench/README.md` § "Honest comparison notes".
 
@@ -148,5 +150,128 @@ relative to decimal.js v10.6.0, the `0.x` series signals that small
 ergonomic refinements (e.g. helper names unique to Go) may still change.
 Behavioral parity is *not* expected to change — any such change would be a
 regression, caught by `xvalidate/` and the ported suite.
+
+## 11. Upstream bug found during differential fuzzing: `log(0, base)`
+
+Differential fuzzing of decimal.js v10.6.0 against Python `mpmath`
+(200+ digits of precision) found a genuine upstream bug, faithfully
+inherited by this port. We deliberately preserve it: behavioral parity is
+the product (§1, §10), and "fixing" it unilaterally would make decimal-go
+diverge from the reference it claims to match.
+
+### The bug
+
+`Decimal(0).log(base)` (and `Decimal(-0).log(base)`) always returns
+`-Infinity`, regardless of the base. The correct value depends on the base:
+
+```
+log_b(0) = ln(0) / ln(b) = -∞ / ln(b)
+```
+
+- `b > 1`:   `ln(b) > 0`  ⇒ `-∞`  (decimal.js — and decimal-go — are correct)
+- `0 < b < 1`: `ln(b) < 0` ⇒ `+∞`  (**both return `-∞` — wrong**)
+- `b == 1`:  `NaN` (handled correctly upstream by the `base.eq(1)` check)
+
+Confirmed live:
+
+```
+Node decimal.js:   new Decimal(0).log(0.5).valueOf()  → "-Infinity"  (want "+Infinity")
+decimal-go:        Default.Log("0", "0.5").String()   → "-Infinity"  (want "+Infinity")
+mpmath @200dps:    mp.log(0, 0.5)                     → +inf
+```
+
+### Root cause
+
+In decimal.js's `P.log` the zero-argument check short-circuits before the
+base is ever consulted:
+
+```js
+if (arg.s < 0 || !d || !d[0] || arg.eq(1)) {
+  return new Ctor(d && !d[0] ? -1 / 0 : arg.s != 1 ? NaN : d ? 0 : 1 / 0);
+}
+```
+
+decimal-go mirrors this exactly: `newLogSpecial` (trans.go) returns
+`newInf(-1)` for a zero argument unconditionally.
+
+### Why we keep it (and when we won't)
+
+- **Parity is the contract.** The 1518-case cross-validation and the 61-module
+  ported suite exist to make decimal-go *indistinguishable* from decimal.js.
+  Fixing this in Go alone would make `Log` diverge from the reference for
+  exactly the inputs the docs promise compatibility on.
+- **When we'd fix it:** if upstream ships a correction, decimal-go follows
+  (with a changelog entry and regression tests). The suggested upstream fix:
+
+  ```js
+  if (d && !d[0]) {
+    return new Ctor(base.gt(1) ? -1 / 0 : base.lt(1) ? 1 / 0 : NaN);
+  }
+  ```
+
+- **Impact on real code:** only `log(x, base)` with `x → 0` (or `x = 0`)
+  and a fractional base `0 < b < 1` — rare in practice, but real in
+  information-theory / entropy-style computations where probabilities are
+  used as the base. Downstream comparisons like `x.log(b).gt(0)` can flip.
+
+### Test coverage gap
+
+The ported `test/modules/log.js` (log_test.go) exercises `log(1, 0)`,
+`log(10, 0)`, `log(10, 1)`, `log(10, Infinity)`, etc., but never
+`log(0, base)` with `base ∈ (0, 1)` — upstream never tested it either.
+A regression test was added to `regression_test.go` pinning the *current*
+parity behavior (`-Infinity`), so if upstream fixes decimal.js and we
+follow, the change is caught deliberately rather than silently.
+
+Full hunt report (methodology, harness locations, everything else that was
+fuzzed and passed): `bugs.md` in the decimal.js checkout this port was
+derived from.
+
+## 12. Upstream bug #2: `toFraction()` infinite loop under `rounding: 3`
+
+A second bug found during the differential hunt, and it is more severe than
+#1: with `rounding: 3` (ROUND_FLOOR) set, `toFraction()` **never returns**
+for essentially any finite non-zero value — an infinite loop, not a
+crash or exception. Confirmed in:
+
+- decimal.js v10.6.0 (CJS and ESM), and the published npm package
+  `decimal.js@10.6.0` (fresh install) — the JS process hangs (verified by
+  timeout; `npm test` passes 22658/22658 because `test/modules/toFraction.js`
+  hard-codes `rounding: 4`).
+- this port: `c.New("0.5").ToFraction()` with `Rounding: 3` hangs
+  identically (verified by timeout).
+
+### Why it happens
+
+The continued-fraction loop's only exit is `d2.cmp(maxD) == 1` (decimal.js
+~line 2085; this port convert.go `ToFraction`). Under ROUND_FLOOR the exact
+remainder `n.minus(q.times(d2))` is `-0` (IEEE-correct: x−x → −0 under
+round-toward-negative, decimal.js lines 1310/1405). Next iteration
+`divide(n, d, ...)` with `d = -0` yields `q = -Infinity`, so
+`d2 = d0.plus(q.times(d1)) = -Infinity`, and `-Infinity < maxD` — the loop
+does not break, values become `NaN`, and `NaN.cmp(maxD) == 1` is false
+**forever**. A `+0` remainder (any other rounding mode) produces
+`+Infinity > maxD` and the loop exits.
+
+### Our stance
+
+Same as §11: decimal-go inherits the reference behavior and we do not
+deviate unilaterally. Unlike bug #1 (a silently wrong *value*), this one is
+a denial-of-service in both languages — so it is worth stating the
+boundaries explicitly:
+
+- Only `rounding: 3` triggers it; modes 0–2, 4–8 terminate.
+- Only `toFraction()` (continued-fraction expansion) is affected; the loop
+  is the algorithm, not an implementation accident.
+- A `maxD` small enough to terminate the CF before the `-0` remainder
+  (e.g. `toFraction(1)` on `0.5`) dodges the hang in both implementations.
+- If upstream fixes it, we follow. The upstream-proposed guards: break when
+  the remainder is exactly zero (`!d.d[0]`) or when `d2` becomes NaN.
+
+No unit test can pin a hang; the boundary cases above are what our ported
+`toFraction_test.go` covers. The regression pin for the *parity* behavior is
+documented rather than tested, by design.
+
+Full hunt report: `bugs.md` in the decimal.js checkout (same as §11).
  
  

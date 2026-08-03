@@ -56,7 +56,8 @@ behavior* — not just the idea — to Go.
 ### 1. Proving API parity, not just claiming it
 
 Every decimal.js long-form method name (`DividedBy`, `NaturalLogarithm`,
-`SquareRoot`, `ToPower`, …, all 42) exists as an alias, and `parity.go`'s tests
+`SquareRoot`, `ToPower`, … — 39 as alias methods here, with `Plus`, `Minus`,
+`Times`, `ValueOf` as the primary Go names) exists, and `parity.go`'s tests
 check the aliases are *equal to* the primary Go methods. The Go API is
 idiomatic (`x.Div(y)`), while copied JS code keeps compiling via the aliases.
 One deliberate, documented divergence: decimal.js v10.6.0 ships *commented
@@ -93,7 +94,8 @@ on purpose (documented in `docs/DECISIONS.md`):
 
 - Transcendentals that would need more than 1024 significant digits of π/ln10
   panic with `[DecimalError] Precision limit exceeded`, including the quirk
-  that the constructor may be left mutated until you reset it.
+  that the *trig* path may leave the constructor mutated until you reset it
+  (the ln10 path restores config before panicking).
 - The constructor does *not* round at construction time; rounding happens at
   operation time, so `New("123.4500").String()` is `123.45`.
 
@@ -103,7 +105,7 @@ Ratios are only comparable when the same work is measured on both sides
 (full documentation in `bench/README.md`, raw data in `bench/results.txt`).
 
 **Op-only benchmarks** (pre-created operands, same precision, same machine,
-Node v22 vs Go 1.25): **18 of 20 directly comparable op pairs are faster in Go**
+Node v22 vs Go 1.25): **23 of 25 directly comparable pairs are faster in Go**
 (Mul 0.32×, Div 0.48×, Div@1000 0.39×, Cbrt 0.43×, Atan 0.45×, … — ratio < 1
 means Go is faster).
 
@@ -120,7 +122,7 @@ Go's advantage *widens* as precision grows (Div@1000: 0.39×).
 | Layer | Where | What it proves |
 |---|---|---|
 | Ported test suite | `*_test.go` (61 modules) | Every decimal.js assertion, same order, green |
-| Cross-validation | `xvalidate/` | Byte-for-byte identical output vs. live decimal.js, 1518 cases |
+| Cross-validation | `xvalidate/` | Byte-for-byte identical output vs. live decimal.js, 1518 result lines (66 inputs × 23 ops) |
 | Property tests | `property_test.go` | Round-trip, commutativity, add/sub & mul/div inverses, sqrt/cbrt/exp-ln inverses, cmp antisymmetry, modulo range |
 | Stress + race | `stress_test.go` | Precision 400–2048, int64/uint64 edge values, NaN/∞, 64-way race-clean |
 | Regression tests | `regression_test.go` | The 3 real porting bugs locked in |

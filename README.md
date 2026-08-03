@@ -13,7 +13,7 @@
 <p>
   <img src="https://img.shields.io/badge/Test%20modules-61%20of%2061%20ported-brightgreen" alt="Tests">
   <img src="https://img.shields.io/badge/Race%20detector-Clean-success" alt="Race detector">
-  <img src="https://img.shields.io/badge/Cross--validated-1518%20cases-blue" alt="Cross-validated">
+  <img src="https://img.shields.io/badge/Cross--validated-1518%20result%20lines-blue" alt="Cross-validated">
   <img src="https://img.shields.io/badge/Perf-Arithmetic%20faster%20(parsing%20slower)-blueviolet" alt="Performance">
   <img src="https://img.shields.io/badge/Playground-WASM%20in%20browser-brightgreen" alt="Playground">
 </p>
@@ -120,9 +120,10 @@ additional committed tests and tooling:
   values is run through both <img src="assets/logo2x.svg" height="24" align="absmiddle" alt="decimal-go"> (`go run`) and the real
   decimal.js (`node`); the two outputs are byte-for-byte identical
   (`bash xvalidate/compare.sh`, 1518/1518 lines).
-- **API parity** ([`parity.go`](parity.go)): the 42 decimal.js long method
-  names and `toJSON`/`MarshalJSON` exist as aliases and are `equal`-checked
-  against the primary methods — mirroring the real methods in `decimal.js`.
+- **API parity** ([`parity.go`](parity.go)): every decimal.js long-form
+  method name is available (39 as alias methods here, with `Plus`, `Minus`,
+  `Times`, `ValueOf` as the primary Go names), plus `ToJSON`/`MarshalJSON` —
+  all `equal`-checked against the primary methods.
 - **Property-based tests** ([`property_test.go`](property_test.go)):
   round-trip, commutativity,
   add/sub & mul/div inverses, sqrt/cbrt/exp-log inverses, comparisons,
@@ -135,13 +136,14 @@ additional committed tests and tooling:
   "one clone per context" model).
 - **Regression tests** ([`regression_test.go`](regression_test.go)): the three
   bugs fixed while porting (pow10 overflow, Pow negative-base index,
-  `1^±Inf`) are locked in.
+  `1^±Inf`), plus the inherited upstream `log(0, base)` parity behavior
+  (see [`docs/DECISIONS.md`](docs/DECISIONS.md) §11–12), are locked in.
 - **Input matrix** ([`input_test.go`](input_test.go)): every decimal.js value
   type (number, string, `big.Int`, `Decimal`, `-0`, NaN, ±Infinity) accepted.
 - **Operations matrix** ([`MATRIX.md`](MATRIX.md)) documents every op, its
   rounding semantics and edge cases.
 - **Benchmarks** ([`bench/README.md`](bench/README.md) + [`results.txt`](bench/results.txt)):
-  honest Go-vs-JS comparison (18 of 20 directly comparable op pairs are
+  honest Go-vs-JS comparison (23 of 25 directly comparable pairs are
   faster in Go, up to ~3× on multiplication and division); `New(string)`
   parsing is ~1.45× slower and parse+op+format round trips ~1.7× slower,
   because real-world benchmarks that re-parse inputs pay Go's allocation
@@ -149,7 +151,7 @@ additional committed tests and tooling:
 
 ## <img src="assets/header_contributing.svg" alt="Contributing" align="absmiddle">
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started. Security issues and the vulnerability-reporting policy are covered in [SECURITY.md](SECURITY.md).
 
 ## <img src="assets/header_acknowledgements.svg" alt="Acknowledgements" align="absmiddle">
 

@@ -79,4 +79,28 @@ func TestRegressionAll(t *testing.T) {
 	t.Run("Pow10Overflow", TestRegressionPow10Overflow)
 	t.Run("PowNegIndex", TestRegressionPowNegIndex)
 	t.Run("PowOneInf", TestRegressionPowOneInf)
+	t.Run("LogZeroBaseParity", TestRegressionLogZeroBaseParity)
+}
+
+// Regression 4: log(0, base) returns -Infinity unconditionally in both
+// decimal.js v10.6.0 and this port (upstream bug found by differential
+// fuzzing, see docs/DECISIONS.md §11). Math requires +Infinity when
+// 0 < base < 1, but we deliberately preserve reference behavior until
+// upstream fixes it. If decimal.js changes and we follow, this test
+// pinpoints the intended behavioral change instead of letting it slip
+// through silently.
+func TestRegressionLogZeroBaseParity(t *testing.T) {
+	StressDefaultCfg()
+	for _, tc := range []struct{ arg, base, want string }{
+		{"0", "0.5", "-Infinity"},
+		{"0", "0.1", "-Infinity"},
+		{"0", "0.99", "-Infinity"},
+		{"-0", "0.5", "-Infinity"},
+		{"0", "2", "-Infinity"},
+		{"0", "10", "-Infinity"},
+	} {
+		if got := New(tc.arg).Log(tc.base).ValueOf(); got != tc.want {
+			t.Errorf("Log(%s, %s) = %s, want %s (parity with decimal.js v10.6.0)", tc.arg, tc.base, got, tc.want)
+		}
+	}
 }

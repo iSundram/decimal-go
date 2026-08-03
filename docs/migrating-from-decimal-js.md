@@ -69,16 +69,20 @@ do not.
   `RoundCeil=2`, `RoundFloor=3`, `RoundHalfUp=4`, `RoundHalfDown=5`,
   `RoundHalfEven=6`, `RoundHalfCeil=7`, `RoundHalfFloor=8`,
   `Euclid=9` (modulo), matching `ROUND_*` in JS.
-- **1024-digit limit.** Transcendental functions that would need more than
-  `maxDigits` (1024) significant digits of π/ln10 throw a
+- **1024-digit limit.** Transcendental functions that would need more
+  significant digits of π/ln10 than the embedded constants provide (1024)
+  throw a
   `[DecimalError] Precision limit exceeded` panic — a faithful port of
   decimal.js's `precisionLimitExceeded`. After it throws, the constructor
-  setting may be left mutated until you reset it, exactly like the JS module.
+  setting may be left mutated until you reset it (trig path), exactly like
+  the JS module.
 
 ## Concurrency
 
-decimal.js documents: *"It is recommended that each concurrent context use its
-own clone of Decimal."* Constructor values carry mutable state (precision,
+decimal.js keeps module-level mutable state (the `external`, `inexact` and
+`quadrant` flags), so the recommended pattern is one cloned constructor per
+concurrent context. The same applies to this port: Constructor values carry
+mutable state (precision,
 rounding, intermediate flags) and are **not** safe to share across
 goroutines. Create one cloned constructor per goroutine:
 

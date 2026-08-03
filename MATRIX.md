@@ -44,9 +44,10 @@ parity on the shared corpus) and the regression tests.
   state is per-constructor (concurrency-safe), matching decimal.js's
   `external` flag model.
 - `taylorSeries` (`trig.go:91`) terminates on convergence digits; the
-  `precisionLimitExceeded` panic (more significant digits than `maxDigits`) is a **faithful** port of
-  decimal.js: `getPi` estimates required precision and throws when the result
-  needs more than the configured `maxDigits` (1024), leaving config mutated
+  `precisionLimitExceeded` panic is a **faithful** port of
+  decimal.js: `getPi`/`getLn10` estimate required precision and throw when the
+  result needs more significant digits of π/ln10 than the embedded constants
+  provide (1024), leaving config mutated
   until the user resets it, exactly like the original.
 - `getPi` / `getLn10` (`trans.go:74/86`) cache constants per constructor.
 
@@ -100,8 +101,8 @@ trunc`, plus `clone`/`config`/`Default`/`New`/`IsDecimal`.
   boundary, adversarial inputs, NaN/Inf, 64-goroutine clones under `-race`.
 - **Input matrix** (`input_test.go`): number/string/bigInt/Decimal, -0, NaN,
   ±Infinity, hex/bin/oct strings, maxE/minE deep-underflow/overflow.
-- **Cross-validation** (`xvalidate/`): 1518 case lines identical to real
-  decimal.js.
+- **Cross-validation** (`xvalidate/`): 1518 result lines identical to real
+  decimal.js (66 inputs × 23 ops).
 - **Per-op suites**: each op port inherits the original decimal.js test table
   (TestPlus, TestMinus, TestTimes, TestDiv, TestDivToInt, TestIntPow, TestPow,
   TestSqrt, TestCbrt, TestExp, TestLn, TestLog, TestTrig/Hyperbolics, TestTo*
@@ -109,9 +110,9 @@ trunc`, plus `clone`/`config`/`Default`/`New`/`IsDecimal`.
 
 ## Honest comparison notes
 
-- Go `new(string)` parsing benchmarks ~1.3× slower than decimal.js; the full
-  add-from-string round trip ~1.5× slower; op-only arithmetic (mul/div/sqrt/
-  ln/trig) is 2–6× faster. See `bench/README.md` for the full ratio table.
+- Go `new(string)` parsing benchmarks ~1.45× slower than decimal.js; the full
+  parse+op+format round trip ~1.72× slower; op-only arithmetic (mul/div/sqrt/
+  ln/trig) is up to ~3× faster. See `bench/README.md` for the full ratio table.
 - Design intent: the port preserves decimal.js's error and configuration semantics,
   including the 1024-digit `precisionLimitExceeded` for transcendental
   constants and the shared-constructor model: one clone per concurrent

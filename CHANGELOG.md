@@ -11,12 +11,12 @@ No changes yet beyond v0.1.0.
 
 ### Added (this milestone)
 
-- **Cross-validation harness** (`xvalidate/`): 1518-line corpus of unary,
-  binary, formatting and comparison cases run through both the Go port and the
-  live `decimal.js`; outputs diff byte-for-byte identical
-  (`bash xvalidate/compare.sh`).
-- **decimal.js API parity**: all 42 long-form method aliases (`DividedBy`,
-  `SquareRoot`, `NaturalLogarithm`, ...), plus `ToJSON` and `MarshalJSON`.
+- **Cross-validation harness** (`xvalidate/`): 66 shared inputs run through
+  both the Go port and the live `decimal.js`; all 1518 result lines (66 × 23
+  ops) diff byte-for-byte identical (`bash xvalidate/compare.sh`).
+- **decimal.js API parity**: every decimal.js long-form method name exists
+  (39 alias methods, with `Plus`/`Minus`/`Times`/`ValueOf` as primary Go
+  names), plus `ToJSON` and `MarshalJSON`.
 - **Input parity**: `*big.Int` construction (JS `bigint`), with an input-matrix
   test covering number, string, decimal, `-0`, `NaN`, `±Infinity`, hex/bin/oct.
 - **Concurrency fix**: decimal.js's module-level mutable flags

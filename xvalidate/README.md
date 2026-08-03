@@ -19,7 +19,7 @@ Requires `go` and `node` with the `decimal.js` sources available (point
 - `cases.txt`: 50+ fixed inputs — signs, zeros (`0`, `-0`), small/large
   exponents that cross the toExpNeg/toExpPos formatting boundaries (±1e±7/21),
   full integer precision beyond `Number.MAX_SAFE_INTEGER` (1e22,
-  123...890×10^18?), subnormals, `NaN`, `±Infinity`.
+  123...890×10^18), subnormals, `NaN`, `±Infinity`.
 - Unary: `abs`, `neg`, `trunc`, `ceil`, `floor`, `round`, `sqrt`, `cbrt`,
   `exp`, `ln`.
 - Formatting: `dp`, `sd`, `toFixed(2)`, `toExponential(6)`, `toPrecision(8)`.
