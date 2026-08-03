@@ -1,0 +1,45 @@
+name: Sync docs to org Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/sync-docs.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    if: github.repository == 'iSundram/decimal-go'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout org Pages repo
+        uses: actions/checkout@v4
+        with:
+          repository: decimal-go/decimal-go.github.io
+          token: ${{ secrets.ORG_PAGES_TOKEN }}
+          path: org-pages
+          fetch-depth: 0
+
+      - name: Sync docs directory
+        run: |
+          rsync -av --delete docs/ org-pages/ --exclude '.git'
+          cd org-pages
+          git config user.name "decimal-go bot"
+          git config user.email "bot@decimal-go.local"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "Sync docs from iSundram/decimal-go@${GITHUB_SHA::7}"
+            git push
+          else
+            echo "No changes to sync"
+          fi
+        env:
+          GITHUB_SHA: ${{ github.sha }}
