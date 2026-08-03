@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>decimal-go Playground — try the library in your browser</title>
+<meta name="description" content="Interactive WASM playground for decimal-go, the Go port of decimal.js.">
+<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #2b2b2b;
+  --bg-soft:   #303030;
+  --bg-card:   #262626;
+  --text:      #d4d4d4;
+  --text-dim:  #b3b3b3;
+  --text-hi:   #ffffff;
+  --line:      #3c3c3c;
+  --code-bg:   #242424;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--text-hi); text-decoration: none; border-bottom: 1px solid var(--line); }
+a:hover { border-bottom-color: var(--text-hi); }
+.container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+header {
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0;
+  background: rgba(43,43,43,.92);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px; max-width: 980px; margin: 0 auto;
+}
+.header-logo { display: flex; align-items: center; gap: 12px; border-bottom: none; }
+.header-logo img { height: 34px; border-radius: 4px; display: block; }
+nav a { margin-left: 22px; border-bottom: none; color: var(--text-dim); font-size: 15px; }
+nav a:hover { color: var(--text-hi); }
+
+.hero { text-align: center; padding: 70px 24px 50px; border-bottom: 1px solid var(--line); }
+.hero h1 { font-weight: 500; font-size: 34px; color: var(--text-hi); letter-spacing: .5px; }
+.hero p { color: var(--text-dim); font-size: 17px; margin: 12px auto 0; max-width: 640px; }
+
+main { padding: 40px 0 70px; }
+
+.editor {
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.editor-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-card);
+  font-size: 13px; color: var(--text-dim);
+}
+.editor-head .status { display: flex; align-items: center; gap: 8px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #b3b3b3; }
+.dot.ok { background: #7fb069; }
+.dot.err { background: #d45d5d; }
+textarea {
+  width: 100%; min-height: 190px;
+  background: var(--code-bg);
+  color: var(--text-hi);
+  border: none; outline: none; resize: vertical;
+  padding: 18px 20px;
+  font-family: "SFMono-Regular", ui-monospace, Consolas, Menlo, monospace;
+  font-size: 14px; line-height: 1.6;
+}
+textarea::placeholder { color: #6f6f6f; }
+
+.actions { display: flex; gap: 12px; margin: 18px 0 8px; flex-wrap: wrap; }
+.btn {
+  border: 1px solid var(--text-dim); border-radius: 6px;
+  padding: 9px 24px; font-size: 14.5px;
+  color: var(--text-hi); background: transparent; cursor: pointer;
+  font-family: 'Raleway', sans-serif;
+  transition: background .15s;
+}
+.btn:hover { background: var(--bg-soft); }
+.btn.solid { background: var(--text-hi); color: var(--bg); border-color: var(--text-hi); font-weight: 600; }
+.btn.solid:hover { background: var(--text); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.output {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-top: 18px;
+  padding: 18px 20px;
+  font-family: "SFMono-Regular", ui-monospace, Consolas, Menlo, monospace;
+  font-size: 14px;
+  min-height: 70px;
+  white-space: pre-wrap; word-break: break-word;
+  color: var(--text-hi);
+}
+.output .err-line { color: #d45d5d; }
+.output .ok-line { color: var(--text); }
+.output .hint { color: #6f6f6f; font-style: italic; }
+
+.examples { margin-top: 34px; }
+.examples h3 { color: var(--text-hi); font-weight: 600; font-size: 17px; margin-bottom: 10px; }
+.examples .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 5px 14px; font-size: 13px; color: var(--text-dim);
+  background: var(--bg-card); cursor: pointer;
+  font-family: "SFMono-Regular", ui-monospace, Consolas, Menlo, monospace;
+}
+.chip:hover { color: var(--text-hi); border-color: var(--text-dim); }
+
+.ops { margin-top: 34px; }
+.ops h3 { color: var(--text-hi); font-weight: 600; font-size: 17px; margin-bottom: 10px; }
+.ops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.ops-grid div {
+  background: var(--bg-card); border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; color: var(--text-dim);
+  font-family: "SFMono-Regular", ui-monospace, Consolas, Menlo, monospace;
+}
+.ops-grid code { color: var(--text-hi); }
+
+footer { padding: 30px 0 60px; color: var(--text-dim); font-size: 14px; border-top: 1px solid var(--line); }
+footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="header-logo" href="../"><img src="../assets/logo2x.svg" alt="decimal-go"></a>
+    <nav>
+      <a href="../">Docs</a>
+      <a href="https://github.com/iSundram/decimal-go">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="hero">
+    <h1>Playground</h1>
+    <p>The real <code>decimal-go</code> compiled to WebAssembly, running right here in your browser. No server, no install.</p>
+  </div>
+
+  <main>
+    <div class="editor">
+      <div class="editor-head">
+        <span>decimal-go — one expression per line</span>
+        <span class="status"><span class="dot" id="dot"></span><span id="status">loading wasm…</span></span>
+      </div>
+      <textarea id="code" placeholder="1.5 plus 2.25&#10;times(19.99, 3)&#10;sqrt(2)&#10;0.1 plus 0.2"></textarea>
+      <div class="actions" style="padding: 0 16px 16px; margin: 0;">
+        <button class="btn solid" id="run" disabled>Run</button>
+        <button class="btn" id="clear" disabled>Clear</button>
+      </div>
+    </div>
+
+    <div class="output" id="output">
+      <span class="hint">WebAssembly is loading — the library is ~3.7 MB. Try an example below once ready.</span>
+    </div>
+
+    <div class="examples">
+      <h3>Try an example</h3>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="ops">
+      <h3>What's exposed</h3>
+      <div class="ops-grid" id="ops"></div>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <p><strong style="color:#fff">decimal-go</strong> — Go port of <a href="https://github.com/MikeMcl/decimal.js">decimal.js</a> v10.6.0. MIT License.</p>
+    <p>Every operation below runs the actual Go library via WASM — the same code that passes 1518 cross-validation cases.</p>
+  </div>
+</footer>
+
+<script>
+const EXAMPLES = [
+  ['1.5 plus 2.25', 'plus(1.5, 2.25)'],
+  ['19.99 × 3', 'times(19.99, 3)'],
+  ['0.1 + 0.2 — exact', 'plus(0.1, 0.2)'],
+  ['sqrt(2)', 'sqrt(2)'],
+  ['sqrt(-1)', 'sqrt(-1)'],
+  ['cbrt(27)', 'cbrt(27)'],
+  ['pow(2, 0.5)', 'pow(2, 0.5)'],
+  ['exp(1) — Euler', 'exp(1)'],
+  ['ln(e)', 'ln(2.71828182845904523536028747135266249775724709369995)'],
+  ['log10(1000)', 'log10(1000)'],
+  ['sin(pi/2)', 'sin(1.57079632679489661923132169163975144209858469968755)'],
+  ['cos(0)', 'cos(0)'],
+  ['tan(pi/4)', 'tan(0.78539816339744830961566084581987572104929234984378)'],
+  ['div(1, 3) — repeating', 'div(1, 3)'],
+  ['mod(10, 3)', 'mod(10, 3)'],
+  ['0.1 + 0.2 === 0.3?', 'eq(plus(0.1, 0.2), 0.3)'],
+  ['toFixed(pi, 30)', 'toFixed(3.14159265358979323846264338327950288419716939937510, 30)'],
+  ['toHex(255)', 'toHex(255)'],
+  ['toBinary(255)', 'toBinary(255)'],
+  ['toOctal(255)', 'toOctal(255)'],
+  ['cmp(1.5, 1.2)', 'cmp(1.5, 1.2)'],
+  ['NaN behavior', 'sqrt(-1)'],
+];
+
+const OPS = [
+  'new', 'plus', 'minus', 'times', 'div', 'mod', 'pow', 'sqrt', 'cbrt',
+  'exp', 'ln', 'log10', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+  'sinh', 'cosh', 'tanh', 'abs', 'neg', 'trunc', 'ceil', 'floor', 'round',
+  'toFixed', 'toExponential', 'toPrecision', 'toHex', 'toBinary', 'toOctal',
+  'cmp', 'eq', 'gt', 'gte', 'lt', 'lte', 'isNaN', 'isInf', 'isFinite',
+  'isInt', 'valueOf', 'toString',
+];
+
+const $ = id => document.getElementById(id);
+const chipsEl = $('chips'), opsEl = $('ops'), codeEl = $('code'), outEl = $('output');
+
+EXAMPLES.forEach(([label, expr]) => {
+  const c = document.createElement('span');
+  c.className = 'chip';
+  c.textContent = label;
+  c.onclick = () => { codeEl.value = expr; run(); };
+  chipsEl.appendChild(c);
+});
+OPS.forEach(op => {
+  const d = document.createElement('div');
+  const code = document.createElement('code');
+  code.textContent = op;
+  d.appendChild(code);
+  opsEl.appendChild(d);
+});
+
+function status(text, cls) {
+  $('status').textContent = text;
+  $('dot').className = 'dot' + (cls ? ' ' + cls : '');
+}
+
+async function init() {
+  try {
+    if (!window.Go) {
+      await loadWasmExec();
+    }
+    const go = new Go();
+    const result = await WebAssembly.instantiateStreaming(fetch('decimal.wasm'), go.importObject);
+    go.run(result.instance);
+    status('wasm ready', 'ok');
+    $('run').disabled = false;
+    $('clear').disabled = false;
+    $('run').focus();
+  } catch (e) {
+    status('failed to load wasm: ' + e, 'err');
+    outEl.innerHTML = '<span class="err-line">Failed to load WebAssembly: ' + e + '</span>';
+  }
+}
+
+function loadWasmExec() {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'wasm_exec.js';
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('wasm_exec.js missing'));
+    document.head.appendChild(s);
+  });
+}
+
+function parseArgs(s) {
+  // parse "op(arg1, arg2)" -> [op, [args...]]
+  const m = s.match(/^\s*([a-zA-Z]+)\s*\((.*)\)\s*$/s);
+  if (!m) return null;
+  const op = m[1], rest = m[2].trim();
+  if (!rest) return [op, []];
+  const args = [];
+  let cur = '', depth = 0, inStr = false;
+  for (const ch of rest) {
+    if (ch === '"' || ch === "'") inStr = !inStr;
+    if (!inStr) {
+      if (ch === '(' || ch === '[') depth++;
+      else if (ch === ')' || ch === ']') depth--;
+      else if (ch === ',' && depth === 0) { args.push(cur.trim()); cur = ''; continue; }
+    }
+    cur += ch;
+  }
+  if (cur.trim()) args.push(cur.trim());
+  return [op, args];
+}
+
+function unquote(s) {
+  s = s.trim();
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    return s.slice(1, -1);
+  }
+  return s;
+}
+
+function run() {
+  const dg = window.decimalGo;
+  if (!dg) return;
+  const src = codeEl.value;
+  const lines = src.split('\n').filter(l => l.trim() !== '');
+  const results = [];
+  for (const line of lines) {
+    const t = line.trim();
+    if (t.startsWith('//')) { results.push({ text: t, comment: true }); continue; }
+    const parsed = parseArgs(t);
+    if (!parsed) {
+      results.push({ text: 'parse error: ' + t, err: true });
+      continue;
+    }
+    const [op, args] = parsed;
+    if (typeof dg[op] !== 'function') {
+      results.push({ text: 'unknown function: ' + op, err: true });
+      continue;
+    }
+    try {
+      const clean = args.map(unquote);
+      const v = dg[op](...clean);
+      results.push({ text: t + '  =>  ' + v });
+    } catch (e) {
+      results.push({ text: t + '  =>  ' + (e && e.message ? e.message : e), err: true });
+    }
+  }
+  outEl.innerHTML = results.length === 0
+    ? '<span class="hint">Nothing to run — type an expression above.</span>'
+    : results.map(r => r.comment
+        ? '<span class="hint">' + esc(t) + '</span>'
+        : '<span class="' + (r.err ? 'err-line' : 'ok-line') + '">' + esc(r.text) + '</span>').join('\n');
+}
+
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+$('run').onclick = run;
+$('clear').onclick = () => { codeEl.value = ''; outEl.innerHTML = '<span class="hint">Cleared.</span>'; codeEl.focus(); };
+codeEl.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') run();
+});
+
+init();
+</script>
+</body>
+</html>
