@@ -57,7 +57,10 @@ def changes_from_body(body: str) -> str:
     tail = body.split(CHANGES_MARKER, 1)[1]
     if FULL_CHANGELOG_MARKER in tail:
         tail = tail.split(FULL_CHANGELOG_MARKER, 1)[0]
-    return tail.strip()
+    tail = tail.strip()
+    if tail == "* No changes":
+        return ""
+    return tail
 
 
 def read_changelog() -> str:
