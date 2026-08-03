@@ -50,6 +50,50 @@ header {
 nav a { margin-left: 22px; border-bottom: none; color: var(--text-dim); font-size: 15px; }
 nav a:hover { color: var(--text-hi); }
 
+/* ---------- mobile menu ---------- */
+.menu-btn {
+  display: none;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 9px 11px;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+}
+.menu-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-dim);
+  transition: transform .2s, opacity .2s, background .15s;
+}
+.menu-btn:hover span { background: var(--text-hi); }
+.menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-btn.open span:nth-child(2) { opacity: 0; }
+.menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mobile-nav {
+  display: none;
+  position: absolute;
+  top: 100%; left: 0; right: 0;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--line);
+  padding: 6px 24px 16px;
+  flex-direction: column;
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  margin-left: 0;
+  padding: 11px 0;
+  font-size: 15px;
+  border-bottom: 1px solid var(--line);
+}
+.mobile-nav a:last-of-type { border-bottom: none; }
+@media (max-width: 760px) {
+  nav.desktop-nav { display: none; }
+  .menu-btn { display: flex; }
+}
+
 .hero { text-align: center; padding: 70px 24px 50px; border-bottom: 1px solid var(--line); }
 .hero h1 { font-weight: 500; font-size: 34px; color: var(--text-hi); letter-spacing: .5px; }
 .hero p { color: var(--text-dim); font-size: 17px; margin: 12px auto 0; max-width: 640px; }
@@ -143,11 +187,18 @@ footer p { margin-bottom: 4px; }
 <header>
   <div class="header-inner">
     <a class="header-logo" href="../"><img src="../assets/logo2x.svg" alt="decimal-go"></a>
-    <nav>
+    <nav class="desktop-nav">
       <a href="../">Docs</a>
       <a href="https://github.com/iSundram/decimal-go">GitHub</a>
     </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Site">
+    <a href="../">Docs</a>
+    <a href="https://github.com/iSundram/decimal-go">GitHub</a>
+  </nav>
 </header>
 
 <div class="container">
@@ -353,6 +404,28 @@ codeEl.addEventListener('keydown', e => {
 });
 
 init();
+
+(function () {
+  var btn = document.getElementById('menuBtn');
+  var nav = document.getElementById('mobileNav');
+  function toggle(open) {
+    var show = (open === undefined) ? !nav.classList.contains('open') : open;
+    nav.classList.toggle('open', show);
+    btn.classList.toggle('open', show);
+    btn.setAttribute('aria-expanded', show ? 'true' : 'false');
+    btn.setAttribute('aria-label', show ? 'Close menu' : 'Open menu');
+  }
+  btn.addEventListener('click', function () { toggle(); });
+  nav.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') toggle(false);
+  });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('header')) toggle(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') toggle(false);
+  });
+})();
 </script>
 </body>
 </html>
