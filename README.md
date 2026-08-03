@@ -39,7 +39,7 @@
 
 ## <img src="assets/header_install.svg" alt="Installation" align="absmiddle">
 
-`decimal-go` has **zero external dependencies** and requires Go 1.25+.
+<img src="assets/logo2x.svg" height="24" align="absmiddle" alt="decimal-go"> has **zero external dependencies** and requires Go 1.25+.
 
 ```sh
 go get github.com/iSundram/decimal-go
@@ -117,7 +117,7 @@ Beyond the ported suites, exact parity with the live `decimal.js` is proven by
 additional committed tests and tooling:
 
 - **Cross-validation** ([`xvalidate/`](xvalidate/)): a shared corpus of
-  values is run through both decimal-go (`go run`) and the real
+  values is run through both <img src="assets/logo2x.svg" height="24" align="absmiddle" alt="decimal-go"> (`go run`) and the real
   decimal.js (`node`); the two outputs are byte-for-byte identical
   (`bash xvalidate/compare.sh`, 1518/1518 lines).
 - **API parity** ([`parity.go`](parity.go)): the 42 decimal.js long method
